@@ -8,6 +8,7 @@ import { PostModule } from './post_info/post.module';
 import { RecordModule } from './records/records.module';
 import { StaffModule } from './staff/staff.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     PostModule,
     RecordModule,
     StaffModule,
+    AuthModule,
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/studyabroad'),
   ],
   controllers: [],

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { Role } from 'src/enum/roles.enum';
 
 export type Staff_InfoDocument = HydratedDocument<Staff_Info>;
 
@@ -26,8 +27,8 @@ export class Staff_Info {
   @Prop({ type: [{ type: String, ref: 'locality' }] })
   area_list: string[];
 
-  @Prop()
-  type: number;
+  @Prop({ type: String, enum: Role})
+  role: Role[];
 
   @Prop({ type: Date })
   created_at: Date;
