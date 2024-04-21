@@ -11,20 +11,20 @@ export class Offer_letterFile {
   @Prop({ trim: true })
   school: string;
 
-  @Prop({ trim: true })
-  certificate: string;
+  @Prop({type: Array, trim: true })
+  certificate: string[];
 
-  @Prop({ trim: true })
-  transcript: string;
+  @Prop({type: Array, trim: true })
+  transcript: string[];
 
-  @Prop({ trim: true })
-  Citizen_identification_card: string;
+  @Prop({type: Array, trim: true })
+  Citizen_identification_card: string[];
 
-  @Prop({ trim: true })
-  ielts_certificate: string;
+  @Prop({type: Array, trim: true })
+  ielts_certificate: string[];
 
-  @Prop({ trim: true })
-  motivation_letter: string;
+  @Prop({type: Array, trim: true })
+  motivation_letter: string[];
 
   @Prop({ type: [{ type: String, ref: 'Staff_Info' }] })
   staff_list: string[];
@@ -51,32 +51,32 @@ export class VisaFile {
   @Prop({ ref: 'Customer', required: true })
   customer_id: string;
 
-  @Prop({ trim: true })
-  form: string;
+  @Prop({type: Array, trim: true })
+  form: string[];
 
-  @Prop({ trim: true })
-  CoE: string;
+  @Prop({type: Array, trim: true })
+  CoE: string[];
 
-  @Prop({ trim: true })
-  birth_certificate: string;
+  @Prop({type: Array, trim: true })
+  birth_certificate: string[];
 
-  @Prop({ trim: true })
-  passport: string;
+  @Prop({type: Array, trim: true })
+  passport: string[];
 
-  @Prop({ trim: true })
-  citizen_identification_card: string;
+  @Prop({type: Array, trim: true })
+  citizen_identification_card: string[];
 
-  @Prop({ trim: true })
-  ielts_certificate: string;
+  @Prop({type: Array, trim: true })
+  ielts_certificate: string[];
 
-  @Prop({ trim: true })
-  offer_letter: string;
+  @Prop({type: Array, trim: true })
+  offer_letter: string[];
 
-  @Prop({ trim: true })
-  permanent_residence: string;
+  @Prop({type: Array, trim: true })
+  permanent_residence: string[];
 
-  @Prop({ trim: true })
-  financial_records: string;
+  @Prop({type: Array, trim: true })
+  financial_records: string[];
 
   @Prop({ type: [{ type: String, ref: 'Staff_Info' }] })
   staff_list: string[];

@@ -17,8 +17,14 @@ export class Customer {
   @Prop({ trim: true })
   address: string;
 
-  @Prop({ type: [{ type: String, ref: 'Consultation' }] })
-  consultation_list: string[];
+  @Prop({ trim: true })
+  level: string;
+
+  @Prop({ trim: true })
+  destination: string;
+
+  @Prop({ trim: true })
+  question: string;
 
   @Prop()
   status: number;

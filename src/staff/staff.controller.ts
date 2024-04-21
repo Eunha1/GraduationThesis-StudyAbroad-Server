@@ -10,7 +10,7 @@ export class StaffController{
 
     @Post('sign-up')
     async create(@Body() createStaffDto: createStaffDto){
-        return this.service.createStaff(createStaffDto)
+        return await this.service.createStaff(createStaffDto)
     }
 
 }
