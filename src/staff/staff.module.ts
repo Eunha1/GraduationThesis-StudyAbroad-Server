@@ -10,7 +10,7 @@ import { StaffService } from './staff.service';
       { name: Staff_Info.name, schema: Staff_InfoSchema },
     ]),
   ],
-  providers:[StaffService],
+  providers: [StaffService],
   controllers: [StaffController],
   exports: [StaffService],
 })

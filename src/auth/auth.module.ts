@@ -8,9 +8,14 @@ import { RoleGuard } from 'src/role/role.guard';
 import { StaffModule } from 'src/staff/staff.module';
 
 @Module({
-  imports: [StaffModule,JwtModule.register({})],
+  imports: [StaffModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy, RoleGuard],
+  providers: [
+    AuthService,
+    AccessTokenStrategy,
+    RefreshTokenStrategy,
+    RoleGuard,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -9,39 +9,37 @@ import { Role } from '../enum/roles.enum';
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private staffService : StaffService
+    private staffService: StaffService,
   ) {}
 
-
-  async signIn(email : string, password: string): Promise<any>{
-    const staff = await this.staffService.findStaff(email)
-    if(!staff){
+  async signIn(email: string, password: string): Promise<any> {
+    const staff = await this.staffService.findStaff(email);
+    if (!staff) {
       return {
         status: 0,
-        message : 'Không có tài khoản ứng với email'
-      }
+        message: 'Không có tài khoản ứng với email',
+      };
     }
-    if(!(await compare(password, staff.password))){
+    if (!(await compare(password, staff.password))) {
       return {
         status: 0,
-        message: 'wrong password ! Please try again'
-      }
+        message: 'wrong password ! Please try again',
+      };
     }
 
-    const token = await this.getToken(email, password, staff.role)
+    const token = await this.getToken(email, password, staff.role);
     return {
       status: 1,
       message: 'Login success',
-      token
-    }
+      token,
+    };
   }
-
 
   async getToken(email: string, password: string, role: Role[]): Promise<any> {
     const payload = {
       sub: password,
       email,
-      role
+      role,
     };
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,

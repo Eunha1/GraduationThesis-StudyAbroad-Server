@@ -13,7 +13,7 @@ import { CustomerModule } from 'src/customer/customer.module';
 
 @Module({
   imports: [
-    forwardRef(()=> CustomerModule),
+    forwardRef(() => CustomerModule),
     MongooseModule.forFeature([
       { name: Offer_letterFile.name, schema: Offer_letterFile_Schema },
     ]),
@@ -21,7 +21,7 @@ import { CustomerModule } from 'src/customer/customer.module';
       { name: VisaFile.name, schema: VisaFile_Schema },
     ]),
   ],
-  providers: [FileService,JwtService],
+  providers: [FileService, JwtService],
   controllers: [FileController],
   exports: [FileService],
 })

@@ -7,7 +7,7 @@ import { Role } from '../../enum/roles.enum';
 type JwtPayload = {
   sub: string;
   username: string;
-  role: Role
+  role: Role;
 };
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {

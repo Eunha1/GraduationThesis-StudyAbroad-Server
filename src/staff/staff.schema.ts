@@ -27,7 +27,7 @@ export class Staff_Info {
   @Prop({ type: [{ type: String, ref: 'locality' }] })
   area_list: string[];
 
-  @Prop({ type: String, enum: Role})
+  @Prop({ type: String, enum: Role })
   role: Role[];
 
   @Prop({ type: Date })
