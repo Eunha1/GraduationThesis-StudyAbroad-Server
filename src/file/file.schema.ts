@@ -5,7 +5,7 @@ export type Offer_letterFile_Document = HydratedDocument<Offer_letterFile>;
 
 @Schema()
 export class Offer_letterFile {
-  @Prop({ ref: 'Cutomer', required: true })
+  @Prop({ ref: 'Cutomer' })
   customer_id: string;
 
   @Prop({ trim: true })
@@ -25,6 +25,9 @@ export class Offer_letterFile {
 
   @Prop({ type: Array, trim: true })
   motivation_letter: string[];
+
+  @Prop({ trim: true })
+  note: string;
 
   @Prop({ type: [{ type: String, ref: 'Staff_Info' }] })
   staff_list: string[];

@@ -1,9 +1,9 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { LocalityService } from './locality.service';
-import { Roles } from 'src/role/role.decorator';
-import { Role } from 'src/enum/roles.enum';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { RoleGuard } from 'src/role/role.guard';
+import { Roles } from '../role/role.decorator';
+import { Role } from '../enum/roles.enum';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { RoleGuard } from '../role/role.guard';
 import { createLocality } from './locality.dto';
 
 @Controller('api/locality')

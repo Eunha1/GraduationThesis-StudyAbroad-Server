@@ -8,9 +8,14 @@ import {
   VisaFile_Schema,
 } from './file.schema';
 import { Model } from 'mongoose';
-import { offerLetterFile, visaFile } from './file.dto';
-import { CustomerService } from 'src/customer/customer.service';
-
+import {
+  visaInfo,
+  offerLetterFile,
+  offerLetterInfo,
+  visaFile,
+} from './file.dto';
+import { CustomerService } from '../customer/customer.service';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class FileService {
   constructor(
@@ -22,11 +27,16 @@ export class FileService {
 
     @Inject(forwardRef(() => CustomerService))
     private customerService: CustomerService,
+
+    private config: ConfigService,
   ) {}
 
-  async uploadOfferLetterFile(offerLetterFile: offerLetterFile): Promise<any> {
+  async uploadOfferLetterFile(
+    files: offerLetterFile,
+    offerLetterInfo: offerLetterInfo,
+  ): Promise<any> {
     const customer = await this.customerService.findCustomerByPhone(
-      offerLetterFile.customer_phone,
+      offerLetterInfo.customer_phone,
     );
     if (!customer) {
       return {
@@ -36,13 +46,31 @@ export class FileService {
     }
     const data = {
       customer_id: customer._id,
-      school: offerLetterFile.school_name,
-      certificate: offerLetterFile.certificate,
-      transcript: offerLetterFile.transcript,
-      citizen_identification_card: offerLetterFile.citizen_identification_card,
-      ielts_certificate: offerLetterFile.ielts_certificate,
-      motivation_letter: offerLetterFile.motivation_letter,
-      status: offerLetterFile.status,
+      school: offerLetterInfo.school_name,
+      certificate: files.certificate
+        ? files.certificate.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : files.certificate,
+      transcript: files.transcript
+        ? files.transcript.map((item) => item.destination + '/' + item.filename)
+        : files.transcript,
+      citizen_identification_card: files.citizen_identification_card
+        ? files.citizen_identification_card.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : files.citizen_identification_card,
+      ielts_certificate: files.ielts_certificate
+        ? files.ielts_certificate.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : files.ielts_certificate,
+      motivation_letter: files.motivation_letter
+        ? files.motivation_letter.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : files.motivation_letter,
+      status: offerLetterInfo.status,
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -60,9 +88,9 @@ export class FileService {
     };
   }
 
-  async uploadVisaFile(visaFile: visaFile): Promise<any> {
+  async uploadVisaFile(files: visaFile, visaInfo: visaInfo): Promise<any> {
     const customer = await this.customerService.findCustomerByPhone(
-      visaFile.customer_phone,
+      visaInfo.customer_phone,
     );
     if (!customer) {
       return {
@@ -73,16 +101,46 @@ export class FileService {
 
     const data = {
       customer_id: customer._id,
-      form: visaFile.form,
-      CoE: visaFile.CoE,
-      birth_certificate: visaFile.birth_certificate,
-      passport: visaFile.passport,
-      citizen_identification_card: visaFile.citizen_identification_card,
-      ielts_certificate: visaFile.ielts_certificate,
-      offer_letter: visaFile.offer_letter,
-      permanent_residence: visaFile.permanent_residence,
-      financial_records: visaFile.financial_records,
-      status: visaFile.status,
+      form: files.form
+        ? files.form.map((item) => item.destination + '/' + item.filename)
+        : [],
+      CoE: files.CoE
+        ? files.CoE.map((item) => item.destination + '/' + item.filename)
+        : [],
+      birth_certificate: files.birth_certificate
+        ? files.birth_certificate.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : [],
+      passport: files.passport
+        ? files.passport.map((item) => item.destination + '/' + item.filename)
+        : [],
+      citizen_identification_card: files.citizen_identification_card
+        ? files.citizen_identification_card.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : [],
+      ielts_certificate: files.ielts_certificate
+        ? files.ielts_certificate.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : [],
+      offer_letter: files.offer_letter
+        ? files.offer_letter.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : [],
+      permanent_residence: files.permanent_residence
+        ? files.permanent_residence.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : [],
+      financial_records: files.financial_records
+        ? files.financial_records.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : [],
+      status: visaInfo.status,
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -172,6 +230,7 @@ export class FileService {
     const customer_info = await this.customerService.findCustomerById(
       offerLetter_info.customer_id,
     );
+    const web_url = this.config.get('WEB_URL');
     const data = {
       customer_name: customer_info.name,
       customer_phone: customer_info.phone,
@@ -179,11 +238,23 @@ export class FileService {
       customer_address: customer_info.address,
       customer_level: customer_info.level,
       school_name: offerLetter_info.school,
-      certificate: offerLetter_info.certificate,
-      transcript: offerLetter_info.transcript,
-      citizen_identification_card: offerLetter_info.Citizen_identification_card,
-      ielts_certificate: offerLetter_info.ielts_certificate,
-      motivation_letter: offerLetter_info.motivation_letter,
+      certificate: offerLetter_info.certificate
+        ? offerLetter_info.certificate.map((item) => web_url + '/' + item)
+        : [],
+      transcript: offerLetter_info.transcript
+        ? offerLetter_info.transcript.map((item) => web_url + '/' + item)
+        : [],
+      citizen_identification_card: offerLetter_info.Citizen_identification_card
+        ? offerLetter_info.Citizen_identification_card.map(
+            (item) => web_url + '/' + item,
+          )
+        : [],
+      ielts_certificate: offerLetter_info.ielts_certificate
+        ? offerLetter_info.ielts_certificate.map((item) => web_url + '/' + item)
+        : [],
+      motivation_letter: offerLetter_info.motivation_letter
+        ? offerLetter_info.motivation_letter.map((item) => web_url + '/' + item)
+        : [],
       status: offerLetter_info.status,
       updated_at: offerLetter_info.updated_at,
       created_at: offerLetter_info.created_at,
@@ -212,21 +283,42 @@ export class FileService {
     const customer_info = await this.customerService.findCustomerById(
       visaFile_info.customer_id,
     );
+    const web_url = this.config.get('WEB_URL');
     const data = {
       customer_name: customer_info.name,
       customer_phone: customer_info.phone,
       customer_email: customer_info.email,
       customer_address: customer_info.address,
       customer_level: customer_info.level,
-      form: visaFile_info.form,
-      CoE: visaFile_info.CoE,
-      birth_certificate: visaFile_info.birth_certificate,
-      passport: visaFile_info.passport,
-      citizen_identification_card: visaFile_info.citizen_identification_card,
-      ielts_certificate: visaFile_info.ielts_certificate,
-      offer_letter: visaFile_info.offer_letter,
-      permanent_residence: visaFile_info.permanent_residence,
-      financial_records: visaFile_info.financial_records,
+      form: visaFile_info.form
+        ? visaFile_info.form.map((item) => web_url + '/' + item)
+        : [],
+      CoE: visaFile_info.CoE
+        ? visaFile_info.CoE.map((item) => web_url + '/' + item)
+        : [],
+      birth_certificate: visaFile_info.birth_certificate
+        ? visaFile_info.birth_certificate.map((item) => web_url + '/' + item)
+        : [],
+      passport: visaFile_info.passport
+        ? visaFile_info.passport.map((item) => web_url + '/' + item)
+        : [],
+      citizen_identification_card: visaFile_info.citizen_identification_card
+        ? visaFile_info.citizen_identification_card.map(
+            (item) => web_url + '/' + item,
+          )
+        : [],
+      ielts_certificate: visaFile_info.ielts_certificate
+        ? visaFile_info.ielts_certificate.map((item) => web_url + '/' + item)
+        : [],
+      offer_letter: visaFile_info.offer_letter
+        ? visaFile_info.offer_letter.map((item) => web_url + '/' + item)
+        : [],
+      permanent_residence: visaFile_info.permanent_residence
+        ? visaFile_info.permanent_residence.map((item) => web_url + '/' + item)
+        : [],
+      financial_records: visaFile_info.financial_records
+        ? visaFile_info.financial_records.map((item) => web_url + '/' + item)
+        : [],
       status: visaFile_info.status,
       updated_at: visaFile_info.updated_at,
       created_at: visaFile_info.created_at,
@@ -242,6 +334,74 @@ export class FileService {
       status: 1,
       message: 'Lấy thông tin thành công',
       data: data,
+    };
+  }
+
+  async updateStatusOfferLetterFile(
+    _id: string,
+    newStatus: number,
+  ): Promise<any> {
+    const updateStatus = await this.offerLetterModel.findOneAndUpdate(
+      { _id: _id },
+      {
+        status: newStatus,
+        updated_at: new Date(),
+      },
+    );
+    if (!updateStatus) {
+      return {
+        status: 0,
+        message: 'Cập nhật trạng thái thất bại',
+      };
+    }
+    return {
+      status: 1,
+      message: 'Cập nhật trạng thái thành công',
+    };
+  }
+
+  async updateStatusVisaFile(_id: string, newStatus: number): Promise<any> {
+    const updateStatus = await this.visaFileModel.findOneAndUpdate(
+      { _id: _id },
+      {
+        status: newStatus,
+        updated_at: new Date(),
+      },
+    );
+    if (!updateStatus) {
+      return {
+        status: 0,
+        message: 'Cập nhật trạng thái thất bại',
+      };
+    }
+    return {
+      status: 1,
+      message: 'Cập nhật trạng thái thành công',
+    };
+  }
+
+  async uploadImage(filePath: string): Promise<any> {
+    console.log(filePath);
+    const data = {
+      school: filePath,
+    };
+    const newInfo = await new this.offerLetterModel(data).save();
+    console.log(newInfo);
+    return {
+      message: 'save success',
+      data: newInfo,
+    };
+  }
+
+  async getImage(id: string): Promise<any> {
+    const info = await this.offerLetterModel.findById(id);
+    const web_url = this.config.get('WEB_URL');
+    const imageURL = web_url + '/' + info.school;
+    console.log(imageURL);
+    return {
+      status: 1,
+      message: 'success',
+      data: imageURL,
     };
   }
 }

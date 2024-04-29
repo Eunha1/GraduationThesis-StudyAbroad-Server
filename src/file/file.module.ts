@@ -9,11 +9,13 @@ import {
 import { FileController } from './file.controller';
 import { FileService } from './file.service';
 import { JwtService } from '@nestjs/jwt';
-import { CustomerModule } from 'src/customer/customer.module';
+import { CustomerModule } from '../customer/customer.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     forwardRef(() => CustomerModule),
+    ConfigModule,
     MongooseModule.forFeature([
       { name: Offer_letterFile.name, schema: Offer_letterFile_Schema },
     ]),

@@ -9,9 +9,15 @@ import { RecordModule } from './records/records.module';
 import { StaffModule } from './staff/staff.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { ConfigModule } from '@nestjs/config';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
     CommissionModule,
     ConsultationModule,
     CustomerModule,

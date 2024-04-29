@@ -25,13 +25,19 @@ export class After_consultation {
   @Prop({ trim: true })
   major: string;
 
+  @Prop({ trim: true })
+  finance: string;
+
+  @Prop({ trim: true })
+  schoolarship: string;
+
   @Prop()
   status: number;
 
   @Prop({ trim: true })
   note: string;
 
-  @Prop({ ref: 'Staff_Info', required: true })
+  @Prop({ ref: 'Staff_Info' })
   staff_id: string;
 
   @Prop({ type: Date })

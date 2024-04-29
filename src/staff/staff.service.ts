@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Staff_Info, Staff_InfoDocument } from './staff.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { createStaffDto } from './staff.dto';
+import { createStaffDto, updateStaffInfo } from './staff.dto';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -55,5 +55,33 @@ export class StaffService {
         message: 'Sign up fail',
       };
     }
+  }
+
+  async updateStaffInfo(
+    email: string,
+    updateStaffInfo: updateStaffInfo,
+  ): Promise<any> {
+    const staff_info = await this.staffModel.findOneAndUpdate(
+      { email: email },
+      {
+        name: updateStaffInfo.name,
+        phone: updateStaffInfo.phone,
+        avatar: updateStaffInfo.avatar,
+        address: updateStaffInfo.address,
+        updated_at: new Date(),
+      },
+    );
+
+    if (!staff_info) {
+      return {
+        status: 0,
+        message: 'Cập nhật không thành công',
+      };
+    }
+
+    return {
+      status: 1,
+      message: ' Cập nhật thành công',
+    };
   }
 }

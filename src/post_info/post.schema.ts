@@ -9,6 +9,12 @@ export class Post_info {
   title: string;
 
   @Prop({ trim: true })
+  author: string;
+
+  @Prop({ trim: true })
+  image: string;
+
+  @Prop({ trim: true })
   content: string;
 
   @Prop({ trim: true })

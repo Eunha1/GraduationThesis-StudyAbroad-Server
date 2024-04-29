@@ -29,7 +29,7 @@ export class Commission {
   @Prop({ trim: true })
   amount: string;
 
-  @Prop({ ref: 'Staff_Info', required: true })
+  @Prop({ ref: 'Staff_Info' })
   staff_id: string;
 
   @Prop({ type: Date })

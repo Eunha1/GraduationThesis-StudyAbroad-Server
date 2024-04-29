@@ -3,3 +3,10 @@ export class createStaffDto {
   password: string;
   role: string;
 }
+
+export class updateStaffInfo {
+  name: string;
+  phone: string;
+  avatar: string;
+  address: string;
+}

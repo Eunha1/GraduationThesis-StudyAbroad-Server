@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Staff_Info, Staff_InfoSchema } from './staff.schema';
 import { StaffController } from './staff.controller';
 import { StaffService } from './staff.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { StaffService } from './staff.service';
       { name: Staff_Info.name, schema: Staff_InfoSchema },
     ]),
   ],
-  providers: [StaffService],
+  providers: [StaffService, JwtService],
   controllers: [StaffController],
   exports: [StaffService],
 })
