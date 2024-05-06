@@ -1,9 +1,9 @@
 import { diskStorage } from "multer";
 
-export const storageConfig = (folder: string, fileName: string) =>diskStorage({
+export const storageConfig = (folder: string) =>diskStorage({
     destination: `uploads/${folder}`,
     filename: (req, file, callback)=>{
-        callback(null,fileName + '-' + file.originalname)
+        callback(null,Date.now() + '-' + file.originalname)
     }
 })
 

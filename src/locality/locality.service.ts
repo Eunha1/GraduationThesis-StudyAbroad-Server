@@ -12,8 +12,8 @@ export class LocalityService {
   ) {}
 
   async createLocality(createLocality: createLocality): Promise<any> {
-    const oldAreaName = this.localityModel.findOne({
-      area_name: createLocality.area_name,
+    const oldAreaName = await this.localityModel.findOne({
+      country: createLocality.country,
     });
     if (oldAreaName) {
       return {
@@ -38,6 +38,21 @@ export class LocalityService {
         status: 0,
         message: 'Tạo mới thất bại',
       };
+    }
+  }
+
+  async getDestination():Promise<any>{
+    const destinationInfo = await this.localityModel.find({})
+    if(!destinationInfo){
+      return {
+        status: 0,
+        message: 'Lấy dữ liệu không thành công'
+      }
+    }
+    return {
+      status: 1,
+      message: 'Lấy dữ liệu thành công',
+      data: destinationInfo
     }
   }
 }

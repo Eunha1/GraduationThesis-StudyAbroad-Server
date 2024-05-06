@@ -18,7 +18,7 @@ export class Offer_letterFile {
   transcript: string[];
 
   @Prop({ type: Array, trim: true })
-  Citizen_identification_card: string[];
+  citizen_identification_card: string[];
 
   @Prop({ type: Array, trim: true })
   ielts_certificate: string[];

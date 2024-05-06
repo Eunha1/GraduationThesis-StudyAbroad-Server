@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { LocalityService } from './locality.service';
 import { Roles } from '../role/role.decorator';
 import { Role } from '../enum/roles.enum';
@@ -15,10 +15,10 @@ export class LocalityController {
   @UseGuards(AuthGuard, RoleGuard)
   async createLocality(@Body() createLocality: createLocality) {
     if (
-      !createLocality.area_type ||
-      createLocality.area_type == '' ||
-      !createLocality.area_name ||
-      createLocality.area_name == ''
+      !createLocality.area ||
+      createLocality.area == '' ||
+      !createLocality.country ||
+      createLocality.country == ''
     ) {
       return {
         status: 0,
@@ -26,5 +26,10 @@ export class LocalityController {
       };
     }
     return await this.service.createLocality(createLocality);
+  }
+
+  @Get('get-destination')
+  async getDestination(){
+    return await this.service.getDestination()
   }
 }

@@ -6,10 +6,10 @@ export type LocalityDocument = HydratedDocument<Locality>;
 @Schema()
 export class Locality {
   @Prop({ trim: true })
-  area_type: string;
+  area: string;
 
   @Prop({ trim: true })
-  area_name: string;
+  country: string;
 
   @Prop({ type: Date })
   created_at: Date;

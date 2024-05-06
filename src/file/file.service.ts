@@ -92,6 +92,7 @@ export class FileService {
     const customer = await this.customerService.findCustomerByPhone(
       visaInfo.customer_phone,
     );
+    console.log(files)
     if (!customer) {
       return {
         status: 0,
@@ -161,12 +162,14 @@ export class FileService {
   async getListOfferLetter(): Promise<any> {
     const offerLetterInfo = await this.offerLetterModel.find({});
     let data: Array<any> = [];
+    let count = 1
     for (let item of offerLetterInfo) {
       const customer_info = await this.customerService.findCustomerById(
         item.customer_id,
       );
       const info = {
-        id: item._id,
+        _id: item._id,
+        stt: count++,
         customer_name: customer_info.name,
         customer_phone: customer_info.phone,
         customer_email: customer_info.email,
@@ -192,12 +195,14 @@ export class FileService {
   async getListVisaFile(): Promise<any> {
     const offerLetterInfo = await this.visaFileModel.find({});
     let data: Array<any> = [];
+    let count = 1
     for (let item of offerLetterInfo) {
       const customer_info = await this.customerService.findCustomerById(
         item.customer_id,
       );
       const info = {
-        id: item._id,
+        _id: item._id,
+        stt: count++,
         customer_name: customer_info.name,
         customer_phone: customer_info.phone,
         customer_email: customer_info.email,
@@ -238,23 +243,40 @@ export class FileService {
       customer_address: customer_info.address,
       customer_level: customer_info.level,
       school_name: offerLetter_info.school,
-      certificate: offerLetter_info.certificate
-        ? offerLetter_info.certificate.map((item) => web_url + '/' + item)
-        : [],
-      transcript: offerLetter_info.transcript
-        ? offerLetter_info.transcript.map((item) => web_url + '/' + item)
-        : [],
-      citizen_identification_card: offerLetter_info.Citizen_identification_card
-        ? offerLetter_info.Citizen_identification_card.map(
-            (item) => web_url + '/' + item,
-          )
-        : [],
-      ielts_certificate: offerLetter_info.ielts_certificate
-        ? offerLetter_info.ielts_certificate.map((item) => web_url + '/' + item)
-        : [],
-      motivation_letter: offerLetter_info.motivation_letter
-        ? offerLetter_info.motivation_letter.map((item) => web_url + '/' + item)
-        : [],
+      imagesList: [
+        {
+          name: 'certificate',
+          images: offerLetter_info.certificate
+          ? offerLetter_info.certificate.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'transcript',
+          images:  offerLetter_info.transcript
+          ? offerLetter_info.transcript.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'citizen_identification_card',
+          images: offerLetter_info.citizen_identification_card
+          ? offerLetter_info.citizen_identification_card.map(
+              (item) => web_url + '/' + item,
+            )
+          : [],
+        },
+        {
+          name: 'ielts_certificate',
+          images:  offerLetter_info.ielts_certificate
+          ? offerLetter_info.ielts_certificate.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'motivation_letter',
+          images: offerLetter_info.motivation_letter
+          ? offerLetter_info.motivation_letter.map((item) => web_url + '/' + item)
+          : [],
+        }
+      ],
       status: offerLetter_info.status,
       updated_at: offerLetter_info.updated_at,
       created_at: offerLetter_info.created_at,
@@ -289,36 +311,64 @@ export class FileService {
       customer_phone: customer_info.phone,
       customer_email: customer_info.email,
       customer_address: customer_info.address,
-      customer_level: customer_info.level,
-      form: visaFile_info.form
-        ? visaFile_info.form.map((item) => web_url + '/' + item)
-        : [],
-      CoE: visaFile_info.CoE
-        ? visaFile_info.CoE.map((item) => web_url + '/' + item)
-        : [],
-      birth_certificate: visaFile_info.birth_certificate
-        ? visaFile_info.birth_certificate.map((item) => web_url + '/' + item)
-        : [],
-      passport: visaFile_info.passport
-        ? visaFile_info.passport.map((item) => web_url + '/' + item)
-        : [],
-      citizen_identification_card: visaFile_info.citizen_identification_card
-        ? visaFile_info.citizen_identification_card.map(
-            (item) => web_url + '/' + item,
-          )
-        : [],
-      ielts_certificate: visaFile_info.ielts_certificate
-        ? visaFile_info.ielts_certificate.map((item) => web_url + '/' + item)
-        : [],
-      offer_letter: visaFile_info.offer_letter
-        ? visaFile_info.offer_letter.map((item) => web_url + '/' + item)
-        : [],
-      permanent_residence: visaFile_info.permanent_residence
-        ? visaFile_info.permanent_residence.map((item) => web_url + '/' + item)
-        : [],
-      financial_records: visaFile_info.financial_records
-        ? visaFile_info.financial_records.map((item) => web_url + '/' + item)
-        : [],
+      imagesList: [
+        {
+          name: 'form',
+          images: visaFile_info.form
+          ? visaFile_info.form.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'CoE',
+          images: visaFile_info.CoE
+          ? visaFile_info.CoE.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'birth_certificate',
+          images: visaFile_info.birth_certificate
+          ? visaFile_info.birth_certificate.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'passport',
+          images: visaFile_info.passport
+          ? visaFile_info.passport.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'citizen_identification_card',
+          images: visaFile_info.citizen_identification_card
+          ? visaFile_info.citizen_identification_card.map(
+              (item) => web_url + '/' + item,
+            )
+          : [],
+        },
+        {
+          name: 'ielts_certificate',
+          images: visaFile_info.ielts_certificate
+          ? visaFile_info.ielts_certificate.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'offer_letter',
+          images: visaFile_info.offer_letter
+          ? visaFile_info.offer_letter.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'permanent_residence',
+          images: visaFile_info.permanent_residence
+          ? visaFile_info.permanent_residence.map((item) => web_url + '/' + item)
+          : [],
+        },
+        {
+          name: 'financial_records',
+          images: visaFile_info.financial_records
+          ? visaFile_info.financial_records.map((item) => web_url + '/' + item)
+          : [],
+        }
+      ],
       status: visaFile_info.status,
       updated_at: visaFile_info.updated_at,
       created_at: visaFile_info.created_at,

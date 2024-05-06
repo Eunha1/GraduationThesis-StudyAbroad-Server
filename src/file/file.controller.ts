@@ -27,13 +27,17 @@ import { storageConfig } from '../../helpers/config';
 import { dateFormat } from 'utils/dateFormat';
 import { extname } from 'path';
 import { VisaFile } from './file.schema';
+import { Roles } from 'src/role/role.decorator';
+import { Role } from 'src/enum/roles.enum';
+import { RoleGuard } from 'src/role/role.guard';
 
 @Controller('api/file')
 export class FileController {
   constructor(private readonly service: FileService) {}
 
   @Post('upload/offer-letter-file')
-  @UseGuards(AuthGuard)
+  @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
+  @UseGuards(AuthGuard, RoleGuard)
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -44,7 +48,7 @@ export class FileController {
         { name: 'motivation_letter' },
       ],
       {
-        storage: storageConfig('offer-letter', dateFormat()),
+        storage: storageConfig('offer-letter'),
         fileFilter: (req, file, callback) => {
           const ext = extname(file.originalname);
           const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp'];
@@ -93,7 +97,8 @@ export class FileController {
   }
 
   @Post('upload/visa-file')
-  @UseGuards(AuthGuard)
+  @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
+  @UseGuards(AuthGuard, RoleGuard)
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -108,7 +113,7 @@ export class FileController {
         { name: 'financial_records' },
       ],
       {
-        storage: storageConfig('visa', dateFormat()),
+        storage: storageConfig('visa'),
         fileFilter: (req, file, callback) => {
           const ext = extname(file.originalname);
           const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp'];
@@ -182,7 +187,8 @@ export class FileController {
   }
 
   @Put('offer-letter/update-status/:offerLetter_id')
-  @UseGuards(AuthGuard)
+  @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
+  @UseGuards(AuthGuard, RoleGuard)
   async updateStatusOfferLetterFile(
     @Param('offerLetter_id') offerLetterId: string,
     @Body() data: any,
@@ -200,7 +206,8 @@ export class FileController {
   }
 
   @Put('visa-file/update-status/:visa_id')
-  @UseGuards(AuthGuard)
+  @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
+  @UseGuards(AuthGuard, RoleGuard)
   async updateStatusVisaFile(
     @Param('visa_id') visaId: string,
     @Body() data: any,
