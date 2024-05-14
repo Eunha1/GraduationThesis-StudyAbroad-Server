@@ -1,8 +1,12 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
+  Offer_letter,
+  Offer_letterDocument,
   Offer_letterFile,
   Offer_letterFile_Document,
+  Visa,
+  VisaDocument,
   VisaFile,
   VisaFile_Document,
   VisaFile_Schema,
@@ -13,6 +17,8 @@ import {
   offerLetterFile,
   offerLetterInfo,
   visaFile,
+  offerLetterRecord,
+  visaRecord,
 } from './file.dto';
 import { CustomerService } from '../customer/customer.service';
 import { ConfigService } from '@nestjs/config';
@@ -24,6 +30,12 @@ export class FileService {
 
     @InjectModel(VisaFile.name)
     private readonly visaFileModel: Model<VisaFile_Document>,
+
+    @InjectModel(Offer_letter.name)
+    private readonly offerLetterRecordModel: Model<Offer_letterDocument>,
+
+    @InjectModel(Visa.name)
+    private readonly visaRecordsModel: Model<VisaDocument>,
 
     @Inject(forwardRef(() => CustomerService))
     private customerService: CustomerService,
@@ -92,7 +104,7 @@ export class FileService {
     const customer = await this.customerService.findCustomerByPhone(
       visaInfo.customer_phone,
     );
-    console.log(files)
+    console.log(files);
     if (!customer) {
       return {
         status: 0,
@@ -162,7 +174,7 @@ export class FileService {
   async getListOfferLetter(): Promise<any> {
     const offerLetterInfo = await this.offerLetterModel.find({});
     let data: Array<any> = [];
-    let count = 1
+    let count = 1;
     for (let item of offerLetterInfo) {
       const customer_info = await this.customerService.findCustomerById(
         item.customer_id,
@@ -195,7 +207,7 @@ export class FileService {
   async getListVisaFile(): Promise<any> {
     const offerLetterInfo = await this.visaFileModel.find({});
     let data: Array<any> = [];
-    let count = 1
+    let count = 1;
     for (let item of offerLetterInfo) {
       const customer_info = await this.customerService.findCustomerById(
         item.customer_id,
@@ -247,35 +259,39 @@ export class FileService {
         {
           name: 'certificate',
           images: offerLetter_info.certificate
-          ? offerLetter_info.certificate.map((item) => web_url + '/' + item)
-          : [],
+            ? offerLetter_info.certificate.map((item) => web_url + '/' + item)
+            : [],
         },
         {
           name: 'transcript',
-          images:  offerLetter_info.transcript
-          ? offerLetter_info.transcript.map((item) => web_url + '/' + item)
-          : [],
+          images: offerLetter_info.transcript
+            ? offerLetter_info.transcript.map((item) => web_url + '/' + item)
+            : [],
         },
         {
           name: 'citizen_identification_card',
           images: offerLetter_info.citizen_identification_card
-          ? offerLetter_info.citizen_identification_card.map(
-              (item) => web_url + '/' + item,
-            )
-          : [],
+            ? offerLetter_info.citizen_identification_card.map(
+                (item) => web_url + '/' + item,
+              )
+            : [],
         },
         {
           name: 'ielts_certificate',
-          images:  offerLetter_info.ielts_certificate
-          ? offerLetter_info.ielts_certificate.map((item) => web_url + '/' + item)
-          : [],
+          images: offerLetter_info.ielts_certificate
+            ? offerLetter_info.ielts_certificate.map(
+                (item) => web_url + '/' + item,
+              )
+            : [],
         },
         {
           name: 'motivation_letter',
           images: offerLetter_info.motivation_letter
-          ? offerLetter_info.motivation_letter.map((item) => web_url + '/' + item)
-          : [],
-        }
+            ? offerLetter_info.motivation_letter.map(
+                (item) => web_url + '/' + item,
+              )
+            : [],
+        },
       ],
       status: offerLetter_info.status,
       updated_at: offerLetter_info.updated_at,
@@ -315,59 +331,67 @@ export class FileService {
         {
           name: 'form',
           images: visaFile_info.form
-          ? visaFile_info.form.map((item) => web_url + '/' + item)
-          : [],
+            ? visaFile_info.form.map((item) => web_url + '/' + item)
+            : [],
         },
         {
           name: 'CoE',
           images: visaFile_info.CoE
-          ? visaFile_info.CoE.map((item) => web_url + '/' + item)
-          : [],
+            ? visaFile_info.CoE.map((item) => web_url + '/' + item)
+            : [],
         },
         {
           name: 'birth_certificate',
           images: visaFile_info.birth_certificate
-          ? visaFile_info.birth_certificate.map((item) => web_url + '/' + item)
-          : [],
+            ? visaFile_info.birth_certificate.map(
+                (item) => web_url + '/' + item,
+              )
+            : [],
         },
         {
           name: 'passport',
           images: visaFile_info.passport
-          ? visaFile_info.passport.map((item) => web_url + '/' + item)
-          : [],
+            ? visaFile_info.passport.map((item) => web_url + '/' + item)
+            : [],
         },
         {
           name: 'citizen_identification_card',
           images: visaFile_info.citizen_identification_card
-          ? visaFile_info.citizen_identification_card.map(
-              (item) => web_url + '/' + item,
-            )
-          : [],
+            ? visaFile_info.citizen_identification_card.map(
+                (item) => web_url + '/' + item,
+              )
+            : [],
         },
         {
           name: 'ielts_certificate',
           images: visaFile_info.ielts_certificate
-          ? visaFile_info.ielts_certificate.map((item) => web_url + '/' + item)
-          : [],
+            ? visaFile_info.ielts_certificate.map(
+                (item) => web_url + '/' + item,
+              )
+            : [],
         },
         {
           name: 'offer_letter',
           images: visaFile_info.offer_letter
-          ? visaFile_info.offer_letter.map((item) => web_url + '/' + item)
-          : [],
+            ? visaFile_info.offer_letter.map((item) => web_url + '/' + item)
+            : [],
         },
         {
           name: 'permanent_residence',
           images: visaFile_info.permanent_residence
-          ? visaFile_info.permanent_residence.map((item) => web_url + '/' + item)
-          : [],
+            ? visaFile_info.permanent_residence.map(
+                (item) => web_url + '/' + item,
+              )
+            : [],
         },
         {
           name: 'financial_records',
           images: visaFile_info.financial_records
-          ? visaFile_info.financial_records.map((item) => web_url + '/' + item)
-          : [],
-        }
+            ? visaFile_info.financial_records.map(
+                (item) => web_url + '/' + item,
+              )
+            : [],
+        },
       ],
       status: visaFile_info.status,
       updated_at: visaFile_info.updated_at,
@@ -453,5 +477,279 @@ export class FileService {
       message: 'success',
       data: imageURL,
     };
+  }
+
+  async uploadOfferLetter(
+    files: { offer_letter?: Express.Multer.File[] },
+    offerLetterRecord: offerLetterRecord,
+  ): Promise<any> {
+    const customer = await this.customerService.findCustomerByPhone(
+      offerLetterRecord.customer_phone,
+    );
+    if (!customer) {
+      return {
+        status: 0,
+        message: 'Không tồn tại số điện thoại này',
+      };
+    }
+    const data = {
+      customer_id: customer._id,
+      offer_letter: files.offer_letter
+        ? files.offer_letter.map(
+            (item) => item.destination + '/' + item.filename,
+          )
+        : files.offer_letter,
+      school: offerLetterRecord.school_name,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+    const newInfo = await new this.offerLetterRecordModel(data).save();
+    if (!newInfo) {
+      return {
+        status: 0,
+        message: 'Tạo mới thất bại',
+      };
+    }
+    return {
+      status: 1,
+      message: 'Tạo mới thành công',
+      data: data,
+    };
+  }
+
+  async uploadVisa(
+    files: { visa?: Express.Multer.File[] },
+    visaRecord: visaRecord,
+  ) {
+    const customer = await this.customerService.findCustomerByPhone(
+      visaRecord.customer_phone,
+    );
+    if (!customer) {
+      return {
+        status: 0,
+        message: 'Không tồn tại số điện thoại này',
+      };
+    }
+    const oldCustomer = await this.visaRecordsModel.findOne({customer_id : customer._id})
+    if(oldCustomer){
+      return {
+        status: 0,
+        message: 'Khách hàng đã tồn tại visa !!!'
+      }
+    }
+    const data = {
+      customer_id: customer._id,
+      visa: files.visa
+        ? files.visa.map((item) => item.destination + '/' + item.filename)
+        : files.visa,
+      country: visaRecord.country,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+    const newInfo = await new this.visaRecordsModel(data).save();
+    if (!newInfo) {
+      return {
+        status: 0,
+        message: 'Tạo mới thất bại',
+      };
+    }
+    return {
+      status: 1,
+      message: 'Tạo mới thành công',
+      data: data,
+    };
+  }
+
+  async getRecordOfferLetter(): Promise<any> {
+    const info = await this.offerLetterRecordModel.find({});
+    let data = [];
+    let count = 1;
+    for (let item of info) {
+      const customer_info = await this.customerService.findCustomerById(
+        item.customer_id,
+      );
+      const obj = {
+        _id: item._id,
+        stt: count++,
+        customer_name: customer_info.name,
+        customer_phone: customer_info.phone,
+        customer_email: customer_info.email,
+        customer_address: customer_info.address,
+        school: item.school,
+        updated_at: item.updated_at,
+        created_at: item.created_at,
+      };
+      data.push(obj);
+    }
+    if (!data) {
+      return {
+        status: 0,
+        message: 'Lấy thông tin thất bại',
+      };
+    }
+
+    return {
+      status: 1,
+      message: 'Lấy thông tin thành công',
+      data: data,
+    };
+  }
+  async getRecordVisa(): Promise<any> {
+    const info = await this.visaRecordsModel.find({});
+    let data = [];
+    let count = 1;
+    for (let item of info) {
+      const customer_info = await this.customerService.findCustomerById(
+        item.customer_id,
+      );
+      const obj = {
+        _id: item._id,
+        stt: count++,
+        customer_name: customer_info.name,
+        customer_phone: customer_info.phone,
+        customer_email: customer_info.email,
+        customer_address: customer_info.address,
+        country: item.country,
+        updated_at: item.updated_at,
+        created_at: item.created_at,
+      };
+      data.push(obj);
+    }
+    if (!data) {
+      return {
+        status: 0,
+        message: 'Lấy thông tin thất bại',
+      };
+    }
+
+    return {
+      status: 1,
+      message: 'Lấy thông tin thành công',
+      data: data,
+    };
+  }
+
+  async getRecordOfferLetterById(_id: string):Promise<any>{
+    const info = await this.offerLetterRecordModel.findById(_id)
+    if(!info){
+      return {
+        status: 0,
+        message: 'Không tồn tại thư mời này'
+      }
+    }
+    const customer_info = await this.customerService.findCustomerById(info.customer_id)
+    const web_url = this.config.get('WEB_URL');
+    const data = {
+      customer_name: customer_info.name,
+      customer_phone: customer_info.phone,
+      customer_email: customer_info.email,
+      customer_address: customer_info.address,
+      school: info.school,
+        imagesList: [
+          {
+            name: 'offer-letter',
+            images: info.offer_letter
+              ? info.offer_letter.map((item) => web_url + '/' + item)
+              : [],
+          },
+        ],
+        updated_at: info.updated_at,
+        created_at: info.created_at,
+    }
+
+    return {
+      status : 1,
+      message : 'Lấy thông tin thành công',
+      data : data
+    }
+  }
+
+  async getRecordVisaById(_id: string):Promise<any>{
+    const info = await this.visaRecordsModel.findById(_id)
+    if(!info){
+      return {
+        status : 0,
+        message : 'Không tồn tại visa này'
+      }
+    }
+    const customer_info = await this.customerService.findCustomerById(info.customer_id)
+    const web_url = this.config.get('WEB_URL');
+    const data = {
+      customer_name: customer_info.name,
+        customer_phone: customer_info.phone,
+        customer_email: customer_info.email,
+        customer_address: customer_info.address,
+        country: info.country,
+        imagesList: [
+          {
+            name: 'visa',
+            images: info.visa
+              ? info.visa.map((item) => web_url + '/' + item)
+              : [],
+          },
+        ],
+        updated_at: info.updated_at,
+        created_at: info.created_at,
+    }
+    return {
+      status : 1,
+      message: 'Lấy thông tin thành công',
+      data: data
+    }
+  }
+  async deleteOfferLetterFile(_id : string):Promise<any>{
+    const data = await this.offerLetterModel.findByIdAndDelete(_id)
+    if(data){
+      return {
+        status : 1,
+        message: 'Xóa hồ sơ thành công'
+      }
+    }
+    return {
+      status: 0,
+      message : 'Xóa hồ sơ thất bại'
+    }
+  }
+
+  async deleteVisaFile(_id: string):Promise<any>{
+    const data = await this.visaFileModel.findByIdAndDelete(_id)
+    if(data){
+      return {
+        status : 1,
+        message: 'Xóa hồ sơ thành công'
+      }
+    }
+    return {
+      status: 0,
+      message : 'Xóa hồ sơ thất bại'
+    }
+  }
+
+  async deleteVisaRecord(_id: string):Promise<any>{
+    const data = await this.visaRecordsModel.findByIdAndDelete(_id)
+    if(data){
+      return {
+        status : 1,
+        message: 'Xóa hồ sơ thành công'
+      }
+    }
+    return {
+      status: 0,
+      message : 'Xóa hồ sơ thất bại'
+    }
+  }
+
+  async deleteOfferLetterRecord(_id: string):Promise<any>{
+    const data = await this.offerLetterRecordModel.findByIdAndDelete(_id)
+    if(data){
+      return {
+        status : 1,
+        message: 'Xóa hồ sơ thành công'
+      }
+    }
+    return {
+      status: 0,
+      message : 'Xóa hồ sơ thất bại'
+    }
   }
 }

@@ -29,7 +29,7 @@ export class LocalityController {
   }
 
   @Get('get-destination')
-  async getDestination(){
-    return await this.service.getDestination()
+  async getDestination() {
+    return await this.service.getDestination();
   }
 }

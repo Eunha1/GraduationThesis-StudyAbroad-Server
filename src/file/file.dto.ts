@@ -25,3 +25,11 @@ export class visaInfo {
   customer_phone: string;
   status: number;
 }
+export class offerLetterRecord {
+  customer_phone: string;
+  school_name: string;
+}
+export class visaRecord {
+  customer_phone: string;
+  country: string;
+}

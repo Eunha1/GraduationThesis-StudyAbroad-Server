@@ -95,3 +95,48 @@ export class VisaFile {
 }
 
 export const VisaFile_Schema = SchemaFactory.createForClass(VisaFile);
+
+export type Offer_letterDocument = HydratedDocument<Offer_letter>;
+
+@Schema()
+export class Offer_letter {
+  @Prop({ ref: 'Customer', required: true })
+  customer_id: string;
+
+  @Prop({ type: Array, trim: true })
+  offer_letter: string[];
+
+  @Prop({ trim: true })
+  school: string;
+
+  @Prop({ type: Date })
+  created_at: Date;
+
+  @Prop({ type: Date })
+  updated_at: Date;
+}
+
+export const Offer_letterSchema = SchemaFactory.createForClass(Offer_letter);
+
+// Visa
+export type VisaDocument = HydratedDocument<Visa>;
+
+@Schema()
+export class Visa {
+  @Prop({ ref: 'Customer', required: true })
+  customer_id: string;
+
+  @Prop({ type: Array, trim: true })
+  visa: string[];
+
+  @Prop({ trim: true })
+  country: string;
+
+  @Prop({ type: Date })
+  created_at: Date;
+
+  @Prop({ type: Date })
+  updated_at: Date;
+}
+
+export const VisaSchema = SchemaFactory.createForClass(Visa);

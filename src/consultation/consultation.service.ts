@@ -35,6 +35,8 @@ export class ConsultationService {
       country: newConsultation.country,
       school: newConsultation.school,
       majors: newConsultation.majors,
+      finance: newConsultation.finance,
+      schoolarship: newConsultation.schoolarship,
       status: newConsultation.status,
       note: newConsultation.note,
       created_at: new Date(),
@@ -51,6 +53,7 @@ export class ConsultationService {
     return {
       status: 1,
       message: 'Tạo mới thành công',
+      data: data
     };
   }
 
@@ -63,18 +66,21 @@ export class ConsultationService {
       };
     }
     let data = [];
+    let count = 1
     for (let item of listConsultation) {
       const customer_info = await this.customerService.findCustomerById(
         item.customer_id,
       );
       const obj = {
-        consultation_id: item._id,
+        _id: item._id,
+        stt : count++,
         customer_name: customer_info.name,
         customer_phone: customer_info.phone,
         customer_address: customer_info.address,
+        customer_email : customer_info.email,
         level: item.level,
         school: item.school,
-        majors: item.major,
+        majors: item.majors,
       };
       data.push(obj);
     }
@@ -105,14 +111,14 @@ export class ConsultationService {
     const data = {
       consultation_id: _id,
       customer_name: customer_info.name,
-      cusomer_phone: customer_info.phone,
+      customer_phone: customer_info.phone,
       customer_address: customer_info.address,
       customer_email: customer_info.email,
       school_year: consultationInfo.school_year,
       school_name: consultationInfo.school,
       level: consultationInfo.level,
       country: consultationInfo.country,
-      majors: consultationInfo.major,
+      majors: consultationInfo.majors,
       note: consultationInfo.note,
       status: consultationInfo.status,
       created_at: consultationInfo.created_at,
@@ -146,5 +152,19 @@ export class ConsultationService {
       message: 'Cập nhật thành công',
       data: consultation_info,
     };
+  }
+
+  async deleteConsultation(_id: string):Promise<any>{
+    const data = await this.consultaionModel.findByIdAndDelete(_id)
+    if(data){
+      return {
+        status : 1,
+        message: 'Xóa thông tin tư vấn thành công'
+      }
+    }
+    return {
+      status: 0,
+      message: 'Xóa thông tin tư vấn thất bại'
+    }
   }
 }

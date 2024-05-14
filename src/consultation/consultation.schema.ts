@@ -23,7 +23,7 @@ export class After_consultation {
   school: string;
 
   @Prop({ trim: true })
-  major: string;
+  majors: string;
 
   @Prop({ trim: true })
   finance: string;

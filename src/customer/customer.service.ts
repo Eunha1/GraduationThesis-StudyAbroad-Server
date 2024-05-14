@@ -21,8 +21,7 @@ export class CustomerService {
     if (oldPhone || oldEmail) {
       return {
         status: 0,
-        message:
-          `Bạn đã đăng kí tư vấn bằng email : ${oldEmail.email} hoặc số điện thoại : ${oldPhone.phone} này , vui lòng chờ đợi liên hệ để được tư vấn`,
+        message: `Bạn đã đăng kí tư vấn bằng email : ${oldEmail.email} hoặc số điện thoại : ${oldPhone.phone} này , vui lòng chờ đợi liên hệ để được tư vấn`,
       };
     }
     const info = {
@@ -38,12 +37,12 @@ export class CustomerService {
         status: 0,
         message: 'Đăng kí thất bại',
       };
-    } 
+    }
     return {
-        status: 1,
-        message: 'Đăng kí thành công',
-        data: newInfo
-      };
+      status: 1,
+      message: 'Đăng kí thành công',
+      data: newInfo,
+    };
   }
 
   async getListAdviseInfo(): Promise<any> {
@@ -54,9 +53,9 @@ export class CustomerService {
         message: 'Lấy danh sách thất bại',
       };
     }
-    let data = []
+    let data = [];
     info.map((item, index) => {
-       const obj = {
+      const obj = {
         stt: index,
         _id: item._id,
         phone: item.phone,
@@ -67,10 +66,10 @@ export class CustomerService {
         level: item.level,
         destination: item.destination,
         question: item.question,
-        created_at: item.created_at
-       }
-       data.push(obj)
-    })
+        created_at: item.created_at,
+      };
+      data.push(obj);
+    });
     return {
       status: 1,
       message: 'Lấy danh sách thành công',

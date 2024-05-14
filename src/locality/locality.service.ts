@@ -41,18 +41,18 @@ export class LocalityService {
     }
   }
 
-  async getDestination():Promise<any>{
-    const destinationInfo = await this.localityModel.find({})
-    if(!destinationInfo){
+  async getDestination(): Promise<any> {
+    const destinationInfo = await this.localityModel.find({});
+    if (!destinationInfo) {
       return {
         status: 0,
-        message: 'Lấy dữ liệu không thành công'
-      }
+        message: 'Lấy dữ liệu không thành công',
+      };
     }
     return {
       status: 1,
       message: 'Lấy dữ liệu thành công',
-      data: destinationInfo
-    }
+      data: destinationInfo,
+    };
   }
 }
