@@ -54,7 +54,7 @@ export class FileController {
         storage: storageConfig('offer-letter'),
         fileFilter: (req, file, callback) => {
           const ext = extname(file.originalname);
-          const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp'];
+          const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp', '.pdf'];
           if (!allowedExtArr.includes(ext)) {
             req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
             callback(null, false);
@@ -120,7 +120,7 @@ export class FileController {
         storage: storageConfig('visa'),
         fileFilter: (req, file, callback) => {
           const ext = extname(file.originalname);
-          const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp'];
+          const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp', '.pdf'];
           if (!allowedExtArr.includes(ext)) {
             req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
             callback(null, false);
@@ -190,7 +190,7 @@ export class FileController {
     return await this.service.getVisaFileById(visaFile_id);
   }
 
-  @Put('offer-letter/update-status/:offerLetter_id')
+  @Post('offer-letter/update-status/:offerLetter_id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
   async updateStatusOfferLetterFile(
@@ -209,7 +209,7 @@ export class FileController {
     );
   }
 
-  @Put('visa-file/update-status/:visa_id')
+  @Post('visa-file/update-status/:visa_id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
   async updateStatusVisaFile(
@@ -225,6 +225,82 @@ export class FileController {
     return await this.service.updateStatusVisaFile(visaId, data.newStatus);
   }
 
+  @Post('/update/offer-letter/:id')
+  @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
+  @UseGuards(AuthGuard, RoleGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'certificate' },
+        { name: 'transcript' },
+        { name: 'citizen_identification_card' },
+        { name: 'ielts_certificate' },
+        { name: 'motivation_letter' },
+      ],
+      {
+        storage: storageConfig('record/offer-letter'),
+        fileFilter: (req, file, callback) => {
+          const ext = extname(file.originalname);
+          const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp', '.pdf'];
+          if (!allowedExtArr.includes(ext)) {
+            req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
+            callback(null, false);
+          } else {
+            callback(null, true);
+          }
+        },
+      },
+    ),
+  )
+  async updateOfferLetterFile(
+    @Req() req: any,
+    @UploadedFiles() files: any,
+    @Body() body: any,
+    @Param('id') id: string,
+  ) {
+    if (req.fileValidatorError) {
+      throw new BadRequestException(req.fileValidatorError);
+    }
+    return await this.service.updateOfferLetterFile(id, files, body);
+  }
+
+  @Post('/update/visa-file/:id')
+  @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
+  @UseGuards(AuthGuard, RoleGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'form' },
+        { name: 'CoE' },
+        { name: 'birth_certificate' },
+        { name: 'passport' },
+        { name: 'citizen_identification_card' },
+        { name: 'ielts_certificate' },
+        { name: 'offer_letter' },
+        { name: 'permanent_residence' },
+        { name: 'financial_records' },
+      ],
+      {
+        storage: storageConfig('visa'),
+        fileFilter: (req, file, callback) => {
+          const ext = extname(file.originalname);
+          const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp', '.pdf'];
+          if (!allowedExtArr.includes(ext)) {
+            req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
+            callback(null, false);
+          } else {
+            callback(null, true);
+          }
+        },
+      },
+    ),
+  )
+  async updateVisaFile(@Req() req: any, @UploadedFiles() files: any, @Body() body: any, @Param('id') id: string){
+    if (req.fileValidatorError) {
+      throw new BadRequestException(req.fileValidatorError);
+    }
+    return await this.service.updateVisaFile(id, files, body)
+  }
   @Post('/upload/offer-letter')
   @Roles(Role.ADMISSION_OFFICER, Role.EDU_COUNSELLOR)
   @UseGuards(AuthGuard, RoleGuard)
@@ -233,7 +309,7 @@ export class FileController {
       storage: storageConfig('record/offer-letter'),
       fileFilter: (req, file, callback) => {
         const ext = extname(file.originalname);
-        const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp'];
+        const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp', '.pdf'];
         if (!allowedExtArr.includes(ext)) {
           req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
           callback(null, false);
@@ -271,7 +347,7 @@ export class FileController {
       storage: storageConfig('record/visa'),
       fileFilter: (req, file, callback) => {
         const ext = extname(file.originalname);
-        const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp'];
+        const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp', '.pdf'];
         if (!allowedExtArr.includes(ext)) {
           req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
           callback(null, false);
@@ -283,7 +359,7 @@ export class FileController {
   )
   async uploadVisa(
     @Req() req: any,
-    @UploadedFiles() files: { visa?: Express.Multer.File[] },
+    @UploadedFiles() files: { visa ?: Express.Multer.File[] },
     @Body() visaRecord: visaRecord,
   ) {
     if (!visaRecord.customer_phone || visaRecord.customer_phone === '') {
@@ -315,43 +391,93 @@ export class FileController {
   @Get('/record/offer-letter/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async getRecordOfferLetterById(@Param('id') offer_letter : string){
-    return await this.service.getRecordOfferLetterById(offer_letter)
+  async getRecordOfferLetterById(@Param('id') offer_letter: string) {
+    return await this.service.getRecordOfferLetterById(offer_letter);
   }
 
   @Get('/record/visa/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async getRecordVisaById(@Param('id') visa: string){
-    return await this.service.getRecordVisaById(visa)
+  async getRecordVisaById(@Param('id') visa: string) {
+    return await this.service.getRecordVisaById(visa);
   }
 
+  @Post('/record/update/offer-letter/:id')
+  @Roles(Role.ADMISSION_OFFICER, Role.EDU_COUNSELLOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: 'offer_letter' }], {
+      storage: storageConfig('record/offer-letter'),
+      fileFilter: (req, file, callback) => {
+        const ext = extname(file.originalname);
+        const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp', '.pdf'];
+        if (!allowedExtArr.includes(ext)) {
+          req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
+          callback(null, false);
+        } else {
+          callback(null, true);
+        }
+      },
+    }),
+  )
+  async updateRecordOfferLetter(@Req() req: any, @UploadedFiles() files: any, @Body() body: any, @Param('id') id: string){
+    if (req.fileValidatorError) {
+      throw new BadRequestException(req.fileValidatorError);
+    }
+    console.log(body)
+    return await this.service.updateRecordOfferLetter(id, files, body)
+  }
+
+
+  @Post('/record/update/visa/:id')
+  @Roles(Role.ADMISSION_OFFICER, Role.EDU_COUNSELLOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: 'visa' }], {
+      storage: storageConfig('record/visa'),
+      fileFilter: (req, file, callback) => {
+        const ext = extname(file.originalname);
+        const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp', '.pdf'];
+        if (!allowedExtArr.includes(ext)) {
+          req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
+          callback(null, false);
+        } else {
+          callback(null, true);
+        }
+      },
+    }),
+  )
+  async updateRecordVisa(@Req() req: any, @UploadedFiles() files: any, @Body() body: any, @Param('id') id: string){
+    if (req.fileValidatorError) {
+      throw new BadRequestException(req.fileValidatorError);
+    }
+    return await this.service.updateRecordVisa(id, files, body)
+  }
   @Post('/delete/offer-letter-file/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async deleteOfferLetterFile(@Param('id') offer_letterId : string){
-    return await this.service.deleteOfferLetterFile(offer_letterId)
+  async deleteOfferLetterFile(@Param('id') offer_letterId: string) {
+    return await this.service.deleteOfferLetterFile(offer_letterId);
   }
 
   @Post('/delete/visa-file/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async deleteVisaFile(@Param('id') visaId : string){
-    return await this.service.deleteVisaFile(visaId)
+  async deleteVisaFile(@Param('id') visaId: string) {
+    return await this.service.deleteVisaFile(visaId);
   }
 
   @Post('/delete/offer-letter-record/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async deleteOfferLetterRecord(@Param('id') offerLetter : string){
-    return await this.service.deleteOfferLetterRecord(offerLetter)
+  async deleteOfferLetterRecord(@Param('id') offerLetter: string) {
+    return await this.service.deleteOfferLetterRecord(offerLetter);
   }
 
   @Post('/delete/visa-record/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async deleteVisaRecord(@Param('id') visa : string){
-    return await this.service.deleteVisaRecord(visa)
+  async deleteVisaRecord(@Param('id') visa: string) {
+    return await this.service.deleteVisaRecord(visa);
   }
-
 }

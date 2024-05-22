@@ -22,6 +22,7 @@ import {
 } from './file.dto';
 import { CustomerService } from '../customer/customer.service';
 import { ConfigService } from '@nestjs/config';
+import { mergeObject } from 'utils/mergeObject';
 @Injectable()
 export class FileService {
   constructor(
@@ -59,6 +60,7 @@ export class FileService {
     const data = {
       customer_id: customer._id,
       school: offerLetterInfo.school_name,
+      country: offerLetterInfo.country,
       certificate: files.certificate
         ? files.certificate.map(
             (item) => item.destination + '/' + item.filename,
@@ -104,7 +106,6 @@ export class FileService {
     const customer = await this.customerService.findCustomerByPhone(
       visaInfo.customer_phone,
     );
-    console.log(files);
     if (!customer) {
       return {
         status: 0,
@@ -114,6 +115,7 @@ export class FileService {
 
     const data = {
       customer_id: customer._id,
+      country: visaInfo.country,
       form: files.form
         ? files.form.map((item) => item.destination + '/' + item.filename)
         : [],
@@ -187,6 +189,7 @@ export class FileService {
         customer_email: customer_info.email,
         customer_address: customer_info.address,
         school: item.school,
+        country: item.country,
         status: item.status,
       };
       data.push(info);
@@ -219,6 +222,7 @@ export class FileService {
         customer_phone: customer_info.phone,
         customer_email: customer_info.email,
         customer_address: customer_info.address,
+        country: item.country, 
         status: item.status,
       };
       data.push(info);
@@ -255,6 +259,7 @@ export class FileService {
       customer_address: customer_info.address,
       customer_level: customer_info.level,
       school_name: offerLetter_info.school,
+      country: offerLetter_info.country,
       imagesList: [
         {
           name: 'certificate',
@@ -327,6 +332,7 @@ export class FileService {
       customer_phone: customer_info.phone,
       customer_email: customer_info.email,
       customer_address: customer_info.address,
+      country: visaFile_info.country,
       imagesList: [
         {
           name: 'form',
@@ -454,31 +460,6 @@ export class FileService {
     };
   }
 
-  async uploadImage(filePath: string): Promise<any> {
-    console.log(filePath);
-    const data = {
-      school: filePath,
-    };
-    const newInfo = await new this.offerLetterModel(data).save();
-    console.log(newInfo);
-    return {
-      message: 'save success',
-      data: newInfo,
-    };
-  }
-
-  async getImage(id: string): Promise<any> {
-    const info = await this.offerLetterModel.findById(id);
-    const web_url = this.config.get('WEB_URL');
-    const imageURL = web_url + '/' + info.school;
-    console.log(imageURL);
-    return {
-      status: 1,
-      message: 'success',
-      data: imageURL,
-    };
-  }
-
   async uploadOfferLetter(
     files: { offer_letter?: Express.Multer.File[] },
     offerLetterRecord: offerLetterRecord,
@@ -500,6 +481,7 @@ export class FileService {
           )
         : files.offer_letter,
       school: offerLetterRecord.school_name,
+      country: offerLetterRecord.country,
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -530,12 +512,14 @@ export class FileService {
         message: 'Không tồn tại số điện thoại này',
       };
     }
-    const oldCustomer = await this.visaRecordsModel.findOne({customer_id : customer._id})
-    if(oldCustomer){
+    const oldCustomer = await this.visaRecordsModel.findOne({
+      customer_id: customer._id,
+    });
+    if (oldCustomer) {
       return {
         status: 0,
-        message: 'Khách hàng đã tồn tại visa !!!'
-      }
+        message: 'Khách hàng đã tồn tại visa !!!',
+      };
     }
     const data = {
       customer_id: customer._id,
@@ -576,6 +560,7 @@ export class FileService {
         customer_email: customer_info.email,
         customer_address: customer_info.address,
         school: item.school,
+        country: item.country,
         updated_at: item.updated_at,
         created_at: item.created_at,
       };
@@ -629,15 +614,17 @@ export class FileService {
     };
   }
 
-  async getRecordOfferLetterById(_id: string):Promise<any>{
-    const info = await this.offerLetterRecordModel.findById(_id)
-    if(!info){
+  async getRecordOfferLetterById(_id: string): Promise<any> {
+    const info = await this.offerLetterRecordModel.findById(_id);
+    if (!info) {
       return {
         status: 0,
-        message: 'Không tồn tại thư mời này'
-      }
+        message: 'Không tồn tại thư mời này',
+      };
     }
-    const customer_info = await this.customerService.findCustomerById(info.customer_id)
+    const customer_info = await this.customerService.findCustomerById(
+      info.customer_id,
+    );
     const web_url = this.config.get('WEB_URL');
     const data = {
       customer_name: customer_info.name,
@@ -645,111 +632,247 @@ export class FileService {
       customer_email: customer_info.email,
       customer_address: customer_info.address,
       school: info.school,
-        imagesList: [
-          {
-            name: 'offer-letter',
-            images: info.offer_letter
-              ? info.offer_letter.map((item) => web_url + '/' + item)
-              : [],
-          },
-        ],
-        updated_at: info.updated_at,
-        created_at: info.created_at,
-    }
+      country: info.country,
+      imagesList: [
+        {
+          name: 'offer-letter',
+          images: info.offer_letter
+            ? info.offer_letter.map((item) => web_url + '/' + item)
+            : [],
+        },
+      ],
+      updated_at: info.updated_at,
+      created_at: info.created_at,
+    };
 
     return {
-      status : 1,
-      message : 'Lấy thông tin thành công',
-      data : data
-    }
+      status: 1,
+      message: 'Lấy thông tin thành công',
+      data: data,
+    };
   }
 
-  async getRecordVisaById(_id: string):Promise<any>{
-    const info = await this.visaRecordsModel.findById(_id)
-    if(!info){
+  async getRecordVisaById(_id: string): Promise<any> {
+    const info = await this.visaRecordsModel.findById(_id);
+    if (!info) {
       return {
-        status : 0,
-        message : 'Không tồn tại visa này'
-      }
+        status: 0,
+        message: 'Không tồn tại visa này',
+      };
     }
-    const customer_info = await this.customerService.findCustomerById(info.customer_id)
+    const customer_info = await this.customerService.findCustomerById(
+      info.customer_id,
+    );
     const web_url = this.config.get('WEB_URL');
     const data = {
       customer_name: customer_info.name,
-        customer_phone: customer_info.phone,
-        customer_email: customer_info.email,
-        customer_address: customer_info.address,
-        country: info.country,
-        imagesList: [
-          {
-            name: 'visa',
-            images: info.visa
-              ? info.visa.map((item) => web_url + '/' + item)
-              : [],
-          },
-        ],
-        updated_at: info.updated_at,
-        created_at: info.created_at,
-    }
+      customer_phone: customer_info.phone,
+      customer_email: customer_info.email,
+      customer_address: customer_info.address,
+      country: info.country,
+      imagesList: [
+        {
+          name: 'visa',
+          images: info.visa
+            ? info.visa.map((item) => web_url + '/' + item)
+            : [],
+        },
+      ],
+      updated_at: info.updated_at,
+      created_at: info.created_at,
+    };
     return {
-      status : 1,
+      status: 1,
       message: 'Lấy thông tin thành công',
-      data: data
-    }
+      data: data,
+    };
   }
-  async deleteOfferLetterFile(_id : string):Promise<any>{
-    const data = await this.offerLetterModel.findByIdAndDelete(_id)
-    if(data){
+  async deleteOfferLetterFile(_id: string): Promise<any> {
+    const data = await this.offerLetterModel.findByIdAndDelete(_id);
+    if (data) {
       return {
-        status : 1,
-        message: 'Xóa hồ sơ thành công'
-      }
+        status: 1,
+        message: 'Xóa hồ sơ thành công',
+      };
     }
     return {
       status: 0,
-      message : 'Xóa hồ sơ thất bại'
+      message: 'Xóa hồ sơ thất bại',
+    };
+  }
+
+  async deleteVisaFile(_id: string): Promise<any> {
+    const data = await this.visaFileModel.findByIdAndDelete(_id);
+    if (data) {
+      return {
+        status: 1,
+        message: 'Xóa hồ sơ thành công',
+      };
+    }
+    return {
+      status: 0,
+      message: 'Xóa hồ sơ thất bại',
+    };
+  }
+
+  async deleteVisaRecord(_id: string): Promise<any> {
+    const data = await this.visaRecordsModel.findByIdAndDelete(_id);
+    if (data) {
+      return {
+        status: 1,
+        message: 'Xóa hồ sơ thành công',
+      };
+    }
+    return {
+      status: 0,
+      message: 'Xóa hồ sơ thất bại',
+    };
+  }
+
+  async deleteOfferLetterRecord(_id: string): Promise<any> {
+    const data = await this.offerLetterRecordModel.findByIdAndDelete(_id);
+    if (data) {
+      return {
+        status: 1,
+        message: 'Xóa hồ sơ thành công',
+      };
+    }
+    return {
+      status: 0,
+      message: 'Xóa hồ sơ thất bại',
+    };
+  }
+
+  async updateOfferLetterFile(_id: string, files: any, body: any) {
+    const dataBody = {
+      ...body,
+    };
+    const dataFiles = {
+      certificate: files.certificate
+        ? files.certificate.map(
+            (item: any) => item.destination + '/' + item.filename,
+          )
+        : files.certificate,
+      transcript: files.transcript
+        ? files.transcript.map(
+            (item: any) => item.destination + '/' + item.filename,
+          )
+        : files.transcript,
+      citizen_identification_card: files.citizen_identification_card
+        ? files.citizen_identification_card.map(
+            (item: any) => item.destination + '/' + item.filename,
+          )
+        : files.citizen_identification_card,
+      ielts_certificate: files.ielts_certificate
+        ? files.ielts_certificate.map(
+            (item: any) => item.destination + '/' + item.filename,
+          )
+        : files.ielts_certificate,
+      motivation_letter: files.motivation_letter
+        ? files.motivation_letter.map(
+            (item: any) => item.destination + '/' + item.filename,
+          )
+        : files.motivation_letter,
+      updated_at: new Date(),
+    };
+    const data = mergeObject(dataBody, dataFiles);
+    await this.offerLetterModel.findByIdAndUpdate(_id,data)
+    return {
+      status: 1,
+      message: 'Cập nhật hồ sơ thành công'
     }
   }
 
-  async deleteVisaFile(_id: string):Promise<any>{
-    const data = await this.visaFileModel.findByIdAndDelete(_id)
-    if(data){
-      return {
-        status : 1,
-        message: 'Xóa hồ sơ thành công'
-      }
+  async updateVisaFile(_id: string, files: any, body: any):Promise<any>{
+    const dataBody = {
+      ...body
     }
+    const dataFiles = {
+      form: files.form
+        ? files.form.map((item : any) => item.destination + '/' + item.filename)
+        : [],
+      CoE: files.CoE
+        ? files.CoE.map((item : any) => item.destination + '/' + item.filename)
+        : [],
+      birth_certificate: files.birth_certificate
+        ? files.birth_certificate.map(
+            (item : any) => item.destination + '/' + item.filename,
+          )
+        : [],
+      passport: files.passport
+        ? files.passport.map((item : any) => item.destination + '/' + item.filename)
+        : [],
+      citizen_identification_card: files.citizen_identification_card
+        ? files.citizen_identification_card.map(
+            (item : any) => item.destination + '/' + item.filename,
+          )
+        : [],
+      ielts_certificate: files.ielts_certificate
+        ? files.ielts_certificate.map(
+            (item : any) => item.destination + '/' + item.filename,
+          )
+        : [],
+      offer_letter: files.offer_letter
+        ? files.offer_letter.map(
+            (item : any) => item.destination + '/' + item.filename,
+          )
+        : [],
+      permanent_residence: files.permanent_residence
+        ? files.permanent_residence.map(
+            (item : any) => item.destination + '/' + item.filename,
+          )
+        : [],
+      financial_records: files.financial_records
+        ? files.financial_records.map(
+            (item : any) => item.destination + '/' + item.filename,
+          )
+        : [],
+      updated_at: new Date(),
+    }
+    const data = mergeObject(dataBody, dataFiles)
+    await this.visaFileModel.findByIdAndUpdate(_id, data)
     return {
-      status: 0,
-      message : 'Xóa hồ sơ thất bại'
-    }
+      status: 1,
+      message: 'Cập nhật hồ sơ thành công'
+    } 
   }
 
-  async deleteVisaRecord(_id: string):Promise<any>{
-    const data = await this.visaRecordsModel.findByIdAndDelete(_id)
-    if(data){
-      return {
-        status : 1,
-        message: 'Xóa hồ sơ thành công'
-      }
+  async updateRecordOfferLetter(_id: string, files: any, body : any):Promise<any>{
+    const dataBody = {
+      ...body
     }
+    const dataFiles = {
+      offer_letter: files.offer_letter
+        ? files.offer_letter.map(
+            (item : any) => item.destination + '/' + item.filename,
+          )
+        : files.offer_letter,
+      updated_at: new Date(),
+    }
+    const data = mergeObject(dataBody, dataFiles)
+    await this.offerLetterRecordModel.findByIdAndUpdate(_id, data)
     return {
-      status: 0,
-      message : 'Xóa hồ sơ thất bại'
-    }
+      status: 1,
+      message: 'Cập nhật hồ sơ thành công'
+    } 
   }
 
-  async deleteOfferLetterRecord(_id: string):Promise<any>{
-    const data = await this.offerLetterRecordModel.findByIdAndDelete(_id)
-    if(data){
-      return {
-        status : 1,
-        message: 'Xóa hồ sơ thành công'
-      }
+  async updateRecordVisa(_id: string, files: any, body: any):Promise<any>{
+    const dataBody = {
+      ...body
     }
+
+    const dataFiles = {
+      visa: files.visa
+        ? files.visa.map((item : any) => item.destination + '/' + item.filename)
+        : files.visa,
+      updated_at: new Date(),
+    }
+    const data = mergeObject(dataBody, dataFiles)
+    await this.visaRecordsModel.findByIdAndUpdate(_id, data)
     return {
-      status: 0,
-      message : 'Xóa hồ sơ thất bại'
-    }
+      status: 1,
+      message: 'Cập nhật hồ sơ thành công'
+    } 
   }
 }

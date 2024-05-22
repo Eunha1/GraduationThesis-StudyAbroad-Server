@@ -17,6 +17,9 @@ export class Post_info {
   @Prop({ trim: true })
   content: string;
 
+  @Prop({trim: true})
+  description: string;
+
   @Prop({ trim: true })
   category: string;
 
@@ -28,3 +31,18 @@ export class Post_info {
 }
 
 export const Post_infoSchema = SchemaFactory.createForClass(Post_info);
+
+export type CategoryDocument = HydratedDocument<Category>
+@Schema()
+export class Category{
+  @Prop({trim : true})
+  category: string
+
+  @Prop({ type: Date })
+  created_at: Date;
+
+  @Prop({ type: Date })
+  updated_at: Date;
+}
+
+export const CategorySchema = SchemaFactory.createForClass(Category)

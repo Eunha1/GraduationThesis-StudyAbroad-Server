@@ -10,12 +10,3 @@ export class newConsultation {
   status: string;
   note: string;
 }
-
-export class updateConsultation {
-  school_year: string;
-  level: string;
-  country: string;
-  school: string;
-  majors: string;
-  note: string;
-}

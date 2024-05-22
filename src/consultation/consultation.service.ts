@@ -5,7 +5,7 @@ import {
   After_consultationDocument,
 } from './consultation.schema';
 import { Model } from 'mongoose';
-import { newConsultation, updateConsultation } from './consultation.dto';
+import { newConsultation } from './consultation.dto';
 import { CustomerService } from 'src/customer/customer.service';
 
 @Injectable()
@@ -53,7 +53,7 @@ export class ConsultationService {
     return {
       status: 1,
       message: 'Tạo mới thành công',
-      data: data
+      data: data,
     };
   }
 
@@ -66,18 +66,18 @@ export class ConsultationService {
       };
     }
     let data = [];
-    let count = 1
+    let count = 1;
     for (let item of listConsultation) {
       const customer_info = await this.customerService.findCustomerById(
         item.customer_id,
       );
       const obj = {
         _id: item._id,
-        stt : count++,
+        stt: count++,
         customer_name: customer_info.name,
         customer_phone: customer_info.phone,
         customer_address: customer_info.address,
-        customer_email : customer_info.email,
+        customer_email: customer_info.email,
         level: item.level,
         school: item.school,
         majors: item.majors,
@@ -120,6 +120,8 @@ export class ConsultationService {
       country: consultationInfo.country,
       majors: consultationInfo.majors,
       note: consultationInfo.note,
+      finance: consultationInfo.finance,
+      schoolarship: consultationInfo.schoolarship,
       status: consultationInfo.status,
       created_at: consultationInfo.created_at,
       updated_at: consultationInfo.updated_at,
@@ -132,13 +134,10 @@ export class ConsultationService {
     };
   }
 
-  async updateConsultation(
-    _id: string,
-    updateConsultation: updateConsultation,
-  ): Promise<any> {
+  async updateConsultation(_id: string, body: any): Promise<any> {
     const consultation_info = await this.consultaionModel.findByIdAndUpdate(
       _id,
-      updateConsultation,
+      body,
     );
     if (!consultation_info) {
       return {
@@ -154,17 +153,17 @@ export class ConsultationService {
     };
   }
 
-  async deleteConsultation(_id: string):Promise<any>{
-    const data = await this.consultaionModel.findByIdAndDelete(_id)
-    if(data){
+  async deleteConsultation(_id: string): Promise<any> {
+    const data = await this.consultaionModel.findByIdAndDelete(_id);
+    if (data) {
       return {
-        status : 1,
-        message: 'Xóa thông tin tư vấn thành công'
-      }
+        status: 1,
+        message: 'Xóa thông tin tư vấn thành công',
+      };
     }
     return {
       status: 0,
-      message: 'Xóa thông tin tư vấn thất bại'
-    }
+      message: 'Xóa thông tin tư vấn thất bại',
+    };
   }
 }

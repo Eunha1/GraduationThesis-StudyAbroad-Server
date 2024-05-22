@@ -8,6 +8,7 @@ export class offerLetterFile {
 export class offerLetterInfo {
   customer_phone: string;
   school_name: string;
+  country: string;
   status: number;
 }
 export class visaFile {
@@ -23,11 +24,13 @@ export class visaFile {
 }
 export class visaInfo {
   customer_phone: string;
+  country: string;
   status: number;
 }
 export class offerLetterRecord {
   customer_phone: string;
   school_name: string;
+  country: string;
 }
 export class visaRecord {
   customer_phone: string;
