@@ -20,8 +20,8 @@ export class Post_info {
   @Prop({trim: true})
   description: string;
 
-  @Prop({ trim: true })
-  category: string;
+  @Prop({ type: [{ type: String, ref: 'Category' }] })
+  category: string[];
 
   @Prop({ type: Date })
   created_at: Date;
@@ -37,6 +37,9 @@ export type CategoryDocument = HydratedDocument<Category>
 export class Category{
   @Prop({trim : true})
   category: string
+  
+  @Prop({trim: true})
+  slug: string;
 
   @Prop({ type: Date })
   created_at: Date;

@@ -18,8 +18,13 @@ export class PostService {
   ) {}
 
   async createNewPost(newPost: newPost,file: Express.Multer.File): Promise<any> {
+    const listCategory = newPost.category.split(',')
     const data = {
-      ...newPost,
+      title: newPost.title,
+      author: newPost.author,
+      content: newPost.content,
+      description: newPost.description,
+      category: listCategory.map(item=>item),
       image: file ? file.destination + '/' + file.filename : file,
       updated_at: new Date(),
       created_at: new Date(),
@@ -45,14 +50,21 @@ export class PostService {
     let count = 1
     const web_url = this.config.get('WEB_URL')
     for(const item of data){
-      const obj = {
+      let obj : object
+      
+      let listCategory = []
+      for(const category of item.category){
+        const info = await this.categoryModel.findById(category)
+        listCategory.push(info.category)
+      }
+      obj = {
         _id: item._id,
-        stt: count++,
-        title: item.title,
-        author: item.author,
-        image: web_url + '/' + item.image,
-        category : item.category,
-        description: item.description
+         stt: count++,
+         title: item.title,
+         author: item.author,
+         image: web_url + '/' + item.image,
+         category: listCategory.toString(),
+         description: item.description
       }
       listPost.push(obj)
     }
@@ -79,12 +91,17 @@ export class PostService {
         message: 'Lấy thông tin thất bại',
       };
     }
+    let listCategory = []
+      for(const category of data.category){
+        const info = await this.categoryModel.findById(category)
+        listCategory.push(info)
+      }
     const postInfo = {
       _id: data._id,
         title: data.title,
         author: data.author,
         image: web_url + '/' + data.image,
-        category : data.category,
+        category : listCategory,
         content: data.content,
         description: data.description,
         updated_at: data.updated_at,
@@ -98,8 +115,11 @@ export class PostService {
   }
 
   async updatePost(_id: string, body: any, file: Express.Multer.File):Promise<any>{
+    const listCategory = body.category.split(',')
+    console.log(listCategory)
     const newInfo = {
       ...body,
+      category: listCategory.map(item=>item),
       image: file ? file.destination + '/' + file.filename : file,
       updated_at: new Date()
     }
@@ -130,9 +150,18 @@ export class PostService {
       message: 'Xóa bài viết thành công'
     }
   }
-  async createNewCategory(category: string):Promise<any>{
+  async createNewCategory(category: string, slug: string):Promise<any>{
+    const fingByCategory = await this.categoryModel.findOne({category: category})
+    const findBySlug = await this.categoryModel.findOne({slug:slug})
+    if(fingByCategory || findBySlug){
+      return {
+        status: 0,
+        message: 'Slug hoặc category đã tồn tại'
+      }
+    }
     const newCategory = {
       category: category,
+      slug: slug,
       created_at : new Date(),
       updated_at: new Date()
     }
@@ -170,8 +199,10 @@ export class PostService {
     let count = 1
     for(let item of data){
       const obj = {
+        _id: item._id,
         stt: count++,
         category: item.category,
+        slug: item.slug
       }
       listCategory.push(obj)
     }
@@ -193,6 +224,46 @@ export class PostService {
     return {
       status: 1,
       message: 'Xóa bài viết thành công'
+    }
+  }
+
+  async getListPostBySlug(slug: string):Promise<any>{
+    const categoryInfo = await this.categoryModel.findOne({
+      slug: slug
+    })
+    if(!categoryInfo){
+      return {
+        status: 0,
+        message: 'Không tồn tại slug'
+      }
+    }
+    const web_url = this.config.get('WEB_URL')
+    const listPost = await this.postModel.find({})
+    let listPostBySlug = []
+    for(let item of listPost){
+      if(item.category.includes(categoryInfo._id.toString())){
+        const obj = {
+          _id: item._id,
+          title: item.title,
+          description: item.description,
+          image: web_url + '/' + item.image,
+          author: item.author,
+          updated_at: item.updated_at,
+          created_at: item.created_at
+        }
+        listPostBySlug.push(obj)
+      }
+    }
+    if(listPostBySlug.length === 0){
+      return {
+        status: 0,
+        message: 'Không có bài viết nào có category này'
+      }
+    }
+    return {
+      status: 1,
+      message: 'Lấy danh sách thành công',
+      data: listPostBySlug.reverse()
     }
   }
 }

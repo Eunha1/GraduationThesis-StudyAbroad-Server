@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PostService } from './post.service';
 import { Roles } from '../role/role.decorator';
 import { Role } from '../enum/roles.enum';
@@ -54,8 +54,6 @@ export class PostController {
   }
 
   @Get('/get-post/:post_id')
-  @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard, RoleGuard)
   async getPostById(@Param('post_id') postId: string) {
     return await this.service.getPostById(postId);
   }
@@ -90,6 +88,7 @@ export class PostController {
     return await this.service.deletePost(id)
   }
 
+
   @Get('/list-category')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
@@ -101,13 +100,13 @@ export class PostController {
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
   async createCategory(@Body() body: any){
-    if(!body.category || body.category == ''){
+    if(!body.category || body.category === '' || !body.slug || body.slug === ''){
       return {
         status: 0,
-        message: 'Vui lòng điền category'
+        message: 'Vui lòng điền đầy đủ thông tin'
       }
     }
-    return await this.service.createNewCategory(body.category)
+    return await this.service.createNewCategory(body.category, body.slug)
   }
   @Post('/category/:id')
   @Roles(Role.ADMIN)
@@ -121,5 +120,10 @@ export class PostController {
   @UseGuards(AuthGuard, RoleGuard)
   async deleteCategory(@Param('id') id: string){
     return await this.service.deleteCategory(id)
+  }
+
+  @Get('/list-post/category?')
+  async getListPostBySlug(@Query('slug') slug: string){
+    return await this.service.getListPostBySlug(slug)
   }
 }
