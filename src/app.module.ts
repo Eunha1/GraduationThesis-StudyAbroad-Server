@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
+import { HomeManagerModule } from './home_manager/home.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { join } from 'path';
     PostModule,
     StaffModule,
     AuthModule,
+    HomeManagerModule,
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/studyabroad'),
   ],
   controllers: [],

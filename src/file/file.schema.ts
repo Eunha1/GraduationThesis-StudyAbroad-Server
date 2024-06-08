@@ -11,8 +11,8 @@ export class Offer_letterFile {
   @Prop({ trim: true })
   school: string;
 
-  @Prop({ trim: true})
-  country:  string;
+  @Prop({ trim: true })
+  country: string;
 
   @Prop({ type: Array, trim: true })
   certificate: string[];
@@ -57,7 +57,7 @@ export class VisaFile {
   @Prop({ ref: 'Customer', required: true })
   customer_id: string;
 
-  @Prop({ trim: true})
+  @Prop({ trim: true })
   country: string;
 
   @Prop({ type: Array, trim: true })
@@ -115,9 +115,9 @@ export class Offer_letter {
   @Prop({ trim: true })
   school: string;
 
-  @Prop({ trim: true})
+  @Prop({ trim: true })
   country: string;
-  
+
   @Prop({ type: Date })
   created_at: Date;
 

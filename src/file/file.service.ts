@@ -222,7 +222,7 @@ export class FileService {
         customer_phone: customer_info.phone,
         customer_email: customer_info.email,
         customer_address: customer_info.address,
-        country: item.country, 
+        country: item.country,
         status: item.status,
       };
       data.push(info);
@@ -776,103 +776,109 @@ export class FileService {
       updated_at: new Date(),
     };
     const data = mergeObject(dataBody, dataFiles);
-    await this.offerLetterModel.findByIdAndUpdate(_id,data)
+    await this.offerLetterModel.findByIdAndUpdate(_id, data);
     return {
       status: 1,
-      message: 'Cập nhật hồ sơ thành công'
-    }
+      message: 'Cập nhật hồ sơ thành công',
+    };
   }
 
-  async updateVisaFile(_id: string, files: any, body: any):Promise<any>{
+  async updateVisaFile(_id: string, files: any, body: any): Promise<any> {
     const dataBody = {
-      ...body
-    }
+      ...body,
+    };
     const dataFiles = {
       form: files.form
-        ? files.form.map((item : any) => item.destination + '/' + item.filename)
+        ? files.form.map((item: any) => item.destination + '/' + item.filename)
         : [],
       CoE: files.CoE
-        ? files.CoE.map((item : any) => item.destination + '/' + item.filename)
+        ? files.CoE.map((item: any) => item.destination + '/' + item.filename)
         : [],
       birth_certificate: files.birth_certificate
         ? files.birth_certificate.map(
-            (item : any) => item.destination + '/' + item.filename,
+            (item: any) => item.destination + '/' + item.filename,
           )
         : [],
       passport: files.passport
-        ? files.passport.map((item : any) => item.destination + '/' + item.filename)
+        ? files.passport.map(
+            (item: any) => item.destination + '/' + item.filename,
+          )
         : [],
       citizen_identification_card: files.citizen_identification_card
         ? files.citizen_identification_card.map(
-            (item : any) => item.destination + '/' + item.filename,
+            (item: any) => item.destination + '/' + item.filename,
           )
         : [],
       ielts_certificate: files.ielts_certificate
         ? files.ielts_certificate.map(
-            (item : any) => item.destination + '/' + item.filename,
+            (item: any) => item.destination + '/' + item.filename,
           )
         : [],
       offer_letter: files.offer_letter
         ? files.offer_letter.map(
-            (item : any) => item.destination + '/' + item.filename,
+            (item: any) => item.destination + '/' + item.filename,
           )
         : [],
       permanent_residence: files.permanent_residence
         ? files.permanent_residence.map(
-            (item : any) => item.destination + '/' + item.filename,
+            (item: any) => item.destination + '/' + item.filename,
           )
         : [],
       financial_records: files.financial_records
         ? files.financial_records.map(
-            (item : any) => item.destination + '/' + item.filename,
+            (item: any) => item.destination + '/' + item.filename,
           )
         : [],
       updated_at: new Date(),
-    }
-    const data = mergeObject(dataBody, dataFiles)
-    await this.visaFileModel.findByIdAndUpdate(_id, data)
+    };
+    const data = mergeObject(dataBody, dataFiles);
+    await this.visaFileModel.findByIdAndUpdate(_id, data);
     return {
       status: 1,
-      message: 'Cập nhật hồ sơ thành công'
-    } 
+      message: 'Cập nhật hồ sơ thành công',
+    };
   }
 
-  async updateRecordOfferLetter(_id: string, files: any, body : any):Promise<any>{
+  async updateRecordOfferLetter(
+    _id: string,
+    files: any,
+    body: any,
+  ): Promise<any> {
     const dataBody = {
-      ...body
-    }
+      ...body,
+    };
     const dataFiles = {
       offer_letter: files.offer_letter
         ? files.offer_letter.map(
-            (item : any) => item.destination + '/' + item.filename,
+            (item: any) => item.destination + '/' + item.filename,
           )
         : files.offer_letter,
       updated_at: new Date(),
-    }
-    const data = mergeObject(dataBody, dataFiles)
-    await this.offerLetterRecordModel.findByIdAndUpdate(_id, data)
+    };
+    const data = mergeObject(dataBody, dataFiles);
+    await this.offerLetterRecordModel.findByIdAndUpdate(_id, data);
     return {
       status: 1,
-      message: 'Cập nhật hồ sơ thành công'
-    } 
+      message: 'Cập nhật hồ sơ thành công',
+    };
   }
 
-  async updateRecordVisa(_id: string, files: any, body: any):Promise<any>{
+  async updateRecordVisa(_id: string, files: any, body: any): Promise<any> {
     const dataBody = {
-      ...body
-    }
+      ...body,
+    };
 
     const dataFiles = {
       visa: files.visa
-        ? files.visa.map((item : any) => item.destination + '/' + item.filename)
+        ? files.visa.map((item: any) => item.destination + '/' + item.filename)
         : files.visa,
       updated_at: new Date(),
-    }
-    const data = mergeObject(dataBody, dataFiles)
-    await this.visaRecordsModel.findByIdAndUpdate(_id, data)
+    };
+    const data = mergeObject(dataBody, dataFiles);
+    await this.visaRecordsModel.findByIdAndUpdate(_id, data);
     return {
       status: 1,
-      message: 'Cập nhật hồ sơ thành công'
-    } 
+      message: 'Cập nhật hồ sơ thành công',
+    };
   }
 }

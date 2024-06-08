@@ -295,11 +295,16 @@ export class FileController {
       },
     ),
   )
-  async updateVisaFile(@Req() req: any, @UploadedFiles() files: any, @Body() body: any, @Param('id') id: string){
+  async updateVisaFile(
+    @Req() req: any,
+    @UploadedFiles() files: any,
+    @Body() body: any,
+    @Param('id') id: string,
+  ) {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.updateVisaFile(id, files, body)
+    return await this.service.updateVisaFile(id, files, body);
   }
   @Post('/upload/offer-letter')
   @Roles(Role.ADMISSION_OFFICER, Role.EDU_COUNSELLOR)
@@ -359,7 +364,7 @@ export class FileController {
   )
   async uploadVisa(
     @Req() req: any,
-    @UploadedFiles() files: { visa ?: Express.Multer.File[] },
+    @UploadedFiles() files: { visa?: Express.Multer.File[] },
     @Body() visaRecord: visaRecord,
   ) {
     if (!visaRecord.customer_phone || visaRecord.customer_phone === '') {
@@ -420,14 +425,18 @@ export class FileController {
       },
     }),
   )
-  async updateRecordOfferLetter(@Req() req: any, @UploadedFiles() files: any, @Body() body: any, @Param('id') id: string){
+  async updateRecordOfferLetter(
+    @Req() req: any,
+    @UploadedFiles() files: any,
+    @Body() body: any,
+    @Param('id') id: string,
+  ) {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    console.log(body)
-    return await this.service.updateRecordOfferLetter(id, files, body)
+    console.log(body);
+    return await this.service.updateRecordOfferLetter(id, files, body);
   }
-
 
   @Post('/record/update/visa/:id')
   @Roles(Role.ADMISSION_OFFICER, Role.EDU_COUNSELLOR)
@@ -447,11 +456,16 @@ export class FileController {
       },
     }),
   )
-  async updateRecordVisa(@Req() req: any, @UploadedFiles() files: any, @Body() body: any, @Param('id') id: string){
+  async updateRecordVisa(
+    @Req() req: any,
+    @UploadedFiles() files: any,
+    @Body() body: any,
+    @Param('id') id: string,
+  ) {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.updateRecordVisa(id, files, body)
+    return await this.service.updateRecordVisa(id, files, body);
   }
   @Post('/delete/offer-letter-file/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
