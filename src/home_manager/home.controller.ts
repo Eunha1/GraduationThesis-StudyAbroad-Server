@@ -72,14 +72,14 @@ export class HomeManagerController{
     @Post('/create/news-and-event')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
-    async createNewsAndEvent(@Body() listPost: string[],@Query('type') type: number ){
-        if(listPost.length === 0){
+    async createNewsAndEvent(@Body() post: any,@Query('type') type: number ){
+        if(!post){
             return {
                 status: 0,
-                message: 'Vui lòng thêm ít nhật một bài viết'
+                message: 'Vui lòng thêm bài viết'
             }
         }
-        return await this.createNewsAndEvent(listPost, type)
+        return await this.service.createNewsAndEvent(post, type)
     }
 
     @Get('/news-and-event/list')
@@ -87,11 +87,22 @@ export class HomeManagerController{
         return await this.service.getListNewAndEvent()
     }
 
-    @Get('/news-and-event/list')
+    @Get('/news-and-event/type')
     async getListNewsAndEventByType(@Query('type') type: number){
         return await this.service.getNewsAndEventByType(type)
     }
 
+    @Get('/news-and-event/:id')
+    async getNewsAndEventByID(@Param('id') id: string){
+        return await this.service.getNewsAndEventByID(id)
+    }
+
+    @Post('/delete/news-and-event/:id')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    async deleteNewsAndEvent(@Param('id') id: string){
+        return await this.service.deleteNewsAndEvent(id)
+    }
     @Post('/new-testimonial')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
@@ -121,6 +132,45 @@ export class HomeManagerController{
             throw new BadRequestException(req.fileValidatorError);
         }
         return await this.service.createNewTestimonial(file, newTestimonial)
+    }
+
+    @Post('/update-testimonial/:id')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @UseInterceptors(
+        FileInterceptor('image',{
+            storage: storageConfig('home-manager/testimonial'),
+            fileFilter: (req, file, callback)  => {
+                const ext = extname(file.originalname)
+                const allowedExtArr = ['.jpg', '.png', '.jpeg', '.webp'];
+                if (!allowedExtArr.includes(ext)) {
+                req.fileValidatorError = `Sai định dạng file. Chỉ chấp nhận với các định dạng : ${allowedExtArr}`;
+                callback(null, false);
+                } else {
+                callback(null, true);
+                }
+            }
+        })
+    )
+    async updateTestimonial(@Param('id') id: string, @Body() body: any,@UploadedFile() file: Express.Multer.File, @Req() req: any){
+        console.log(body)
+        if(!body.name || body.name === '' || !body.content || body.content === ''){
+            return {
+                status: 0,
+                message: 'Vui lòng thêm tên và nội dung'
+            }
+        }
+        if (req.fileValidatorError) {
+            throw new BadRequestException(req.fileValidatorError);
+        }
+        return await this.service.updateTestimonial(id, body, file)
+    }
+
+    @Get('/testimonial/:id')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    async getTestimonialByID(@Param('id') id : string){
+        return await this.service.getTestimonialByID(id)
     }
 
     @Get('/list-testimonial')

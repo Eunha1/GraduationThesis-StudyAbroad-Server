@@ -127,6 +127,30 @@ export class PostService {
     };
   }
 
+  async findPostByID(_id: string):Promise<any>{
+    const data = await this.postModel.findById(_id);
+    const web_url = this.config.get('WEB_URL');
+    if (!data) {
+      return null
+    }
+    let listCategory = [];
+    for (const category of data.category) {
+      const info = await this.categoryModel.findById(category);
+      listCategory.push(info);
+    }
+    const postInfo = {
+      _id: data._id,
+      title: data.title,
+      author: data.author,
+      image: web_url + '/' + data.image,
+      category: listCategory,
+      content: data.content,
+      description: data.description,
+      updated_at: data.updated_at,
+      created_at: data.created_at,
+    };
+    return postInfo
+  }
   async updatePost(
     _id: string,
     body: any,

@@ -110,9 +110,9 @@ export class HomeManagerService {
         }
     }
 
-    async createNewsAndEvent(listPost: string[], type: number):Promise<any>{
+    async createNewsAndEvent(post: any, type: number):Promise<any>{
         const data = {
-            post: listPost.map(item=>item),
+            ...post,
             type: type,
             created_at: new Date(),
             updated_at: new Date(),
@@ -131,18 +131,16 @@ export class HomeManagerService {
     }
     async getListNewAndEvent():Promise<any>{
         const list = await this.newsAndEventModel.find({})
+        
         const info =[]
         let count = 1
         for(let item of list){
+            const post_info = await this.postService.findPostByID(item.post)
             const obj = {
                 _id: item._id,
                 stt: count++,
                 type: item.type,
-                post_info: []
-            }
-            for(let post of item.post){
-                const postInfo = await this.postService.getPostById(post)
-                obj.post_info.push(postInfo)
+                post_title: post_info.title
             }
             info.push(obj)
         }
@@ -153,8 +151,27 @@ export class HomeManagerService {
         }
     }
 
+    async getNewsAndEventByID(_id: string):Promise<any>{
+        const info = await this.newsAndEventModel.findById(_id)
+        if(!info){
+            return {
+                status: 0,
+                message: 'Get detail error'
+            }
+        }
+        const data = {
+            type: info.type,
+            post_info : await this.postService.getPostById(info.post)
+        }
+        return {
+            status: 1,
+            message: 'Get detail success',
+            data: info
+        }
+
+    }
     async getNewsAndEventByType(type: number):Promise<any>{
-        const list = await this.newsAndEventModel.find({type: type})
+        const list = await this.newsAndEventModel.find({"type": type})
         const info =[]
         let count = 1
         for(let item of list){
@@ -162,11 +179,7 @@ export class HomeManagerService {
                 _id: item._id,
                 stt: count++,
                 type: item.type,
-                post_info: []
-            }
-            for(let post of item.post){
-                const postInfo = await this.postService.getPostById(post)
-                obj.post_info.push(postInfo)
+                post_info: await this.postService.findPostByID(item.post)
             }
             info.push(obj)
         }
@@ -176,7 +189,41 @@ export class HomeManagerService {
             data: info
         }
     }
+    async deleteNewsAndEvent(_id: string):Promise<any>{
+        const data = await this.newsAndEventModel.findByIdAndDelete(_id)
+        if(!data){
+            return {
+                status: 0,
+                message:'Delete error'
+            }
+        }
 
+        return {
+            status: 1,
+            message: 'Delete success'
+        }
+    }
+    async getTestimonialByID(_id: string):Promise<any>{
+        const data = await this.testimonialModel.findById(_id)
+        if(!data){
+            return {
+                status: 0,
+                message: 'Get detail Error'
+            }
+        }
+        const web_url = this.config.get('WEB_URL');
+        const info = {
+            image : web_url + '/' + data.avatar,
+            name: data.name,
+            description : data.description,
+            content: data.content
+        }
+        return {
+            status: 1,
+            message: 'Get detail success',
+            data: info
+        }
+    }
     async createNewTestimonial(avatar: Express.Multer.File, newTestimonial: newTestimonial):Promise<any>{
         const data = {
             ...newTestimonial,
@@ -196,7 +243,24 @@ export class HomeManagerService {
             message: 'Create success'
         }
     }
-
+    
+    async updateTestimonial(_id: string, body: any, avatar: Express.Multer.File):Promise<any>{
+        const data = {
+            avatar: avatar ? avatar.destination + '/' + avatar.filename : avatar,
+            ...body 
+        }
+        const info = await this.testimonialModel.findByIdAndUpdate(_id, data)
+        if(!info){
+            return {
+                status: 0,
+                message: 'Cập nhật không thành công'
+            }
+        }
+        return {
+            status: 1,
+            message: 'Cập nhật thành công'
+        }
+    }
     async getListTestimonial():Promise<any>{
         const listInfo = await this.testimonialModel.find({})
         const web_url = this.config.get('WEB_URL');

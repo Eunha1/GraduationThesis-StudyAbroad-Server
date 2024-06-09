@@ -26,8 +26,8 @@ export const BannerSchema = SchemaFactory.createForClass(Banner)
 export type NewsAndEventDocument = HydratedDocument<NewsAndEvent>
 @Schema()
 export class NewsAndEvent {
-  @Prop({ type: [{ type: String, ref: 'Post_info' }] })
-  post: string[];
+  @Prop({ ref: 'Post_info' })
+  post: string;
   
   @Prop({trim: true})
   type: number
