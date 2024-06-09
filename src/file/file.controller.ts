@@ -26,8 +26,8 @@ import {
   FileFieldsInterceptor,
   FileInterceptor,
 } from '@nestjs/platform-express';
-import { storageConfig } from '../../helpers/config';
-import { dateFormat } from 'utils/dateFormat';
+import { storageConfig } from '../helpers/config';
+import { dateFormat } from 'src/utils/dateFormat';
 import { extname } from 'path';
 import { VisaFile } from './file.schema';
 import { Roles } from 'src/role/role.decorator';

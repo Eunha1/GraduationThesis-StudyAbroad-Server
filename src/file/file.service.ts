@@ -22,7 +22,7 @@ import {
 } from './file.dto';
 import { CustomerService } from '../customer/customer.service';
 import { ConfigService } from '@nestjs/config';
-import { mergeObject } from 'utils/mergeObject';
+import { mergeObject } from 'src/utils/mergeObject';
 @Injectable()
 export class FileService {
   constructor(

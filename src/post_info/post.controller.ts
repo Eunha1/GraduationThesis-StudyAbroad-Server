@@ -18,7 +18,7 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { RoleGuard } from '../role/role.guard';
 import { newMenu, newPost } from './post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { storageConfig } from 'helpers/config';
+import { storageConfig } from 'src/helpers/config';
 import { extname } from 'path';
 @Controller('api')
 export class PostController {

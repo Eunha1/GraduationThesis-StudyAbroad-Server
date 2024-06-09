@@ -5,7 +5,7 @@ import { Roles } from "src/role/role.decorator";
 import { AuthGuard } from "src/auth/guards/auth.guard";
 import { RoleGuard } from "src/role/role.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { storageConfig } from "helpers/config";
+import { storageConfig } from "src/helpers/config";
 import { extname } from "path";
 import { newBanner, newTestimonial } from "./home.dto";
 
