@@ -27,7 +27,7 @@ import { HomeManagerModule } from './home_manager/home.module';
     StaffModule,
     AuthModule,
     HomeManagerModule,
-    MongooseModule.forRoot('mongodb+srv://phucdq0342:N66NMVpUf7sWQQ1W@studyabroad.sjsr5n9.mongodb.net/studyabroad?retryWrites=true&w=majority&appName=studyabroad'),
+    MongooseModule.forRoot(process.env.DB),
   ],
   controllers: [],
   providers: [],
