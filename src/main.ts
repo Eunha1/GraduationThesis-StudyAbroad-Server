@@ -12,7 +12,7 @@ async function bootstrap() {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
-  app.useStaticAssets(path.join(process.cwd(), ''));
+  app.useStaticAssets(path.join(process.cwd(),'client','dist','index.html'));
   const port = process.env.PORT || 3001;
   app.use(morgan('common'));
   await app.listen(port, () => {
