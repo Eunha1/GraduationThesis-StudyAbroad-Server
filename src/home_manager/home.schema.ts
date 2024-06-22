@@ -1,18 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-
-export type BannerDocument = HydratedDocument<Banner>
+export type BannerDocument = HydratedDocument<Banner>;
 @Schema()
 export class Banner {
   @Prop({ trim: true })
-  title: string
-  
+  title: string;
+
   @Prop({ trim: true })
   image: string;
-  
+
   @Prop({ trim: true })
-  type: number
+  type: number;
 
   @Prop({ type: Date })
   created_at: Date;
@@ -21,16 +20,16 @@ export class Banner {
   updated_at: Date;
 }
 
-export const BannerSchema = SchemaFactory.createForClass(Banner)
+export const BannerSchema = SchemaFactory.createForClass(Banner);
 
-export type NewsAndEventDocument = HydratedDocument<NewsAndEvent>
+export type NewsAndEventDocument = HydratedDocument<NewsAndEvent>;
 @Schema()
 export class NewsAndEvent {
   @Prop({ ref: 'Post_info' })
   post: string;
-  
-  @Prop({trim: true})
-  type: number
+
+  @Prop({ trim: true })
+  type: number;
 
   @Prop({ type: Date })
   created_at: Date;
@@ -39,29 +38,28 @@ export class NewsAndEvent {
   updated_at: Date;
 }
 
-export const NewsAndEventSchema = SchemaFactory.createForClass(NewsAndEvent)
+export const NewsAndEventSchema = SchemaFactory.createForClass(NewsAndEvent);
 
-export type TestimonialDocument = HydratedDocument<Testimonial>
+export type TestimonialDocument = HydratedDocument<Testimonial>;
 @Schema()
-export class Testimonial{
-    @Prop({trim: true})
-    avatar: string
+export class Testimonial {
+  @Prop({ trim: true })
+  avatar: string;
 
-    @Prop({trim: true})
-    name: string
+  @Prop({ trim: true })
+  name: string;
 
-    @Prop({trim: true})
-    description: string
+  @Prop({ trim: true })
+  description: string;
 
-    @Prop({trim: true})
-    content: string
+  @Prop({ trim: true })
+  content: string;
 
-    @Prop({ type: Date })
-    created_at: Date;
+  @Prop({ type: Date })
+  created_at: Date;
 
-    @Prop({ type: Date })
-    updated_at: Date;
-
+  @Prop({ type: Date })
+  updated_at: Date;
 }
 
-export const TestimonialSchema = SchemaFactory.createForClass(Testimonial)
+export const TestimonialSchema = SchemaFactory.createForClass(Testimonial);

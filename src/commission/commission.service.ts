@@ -2,7 +2,7 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Commission, CommissionDocument } from './commission.schema';
 import { Model } from 'mongoose';
-import { newCommission } from './commission.dto';
+import { newCommission, pagination } from './commission.dto';
 import { CustomerService } from '../customer/customer.service';
 
 @Injectable()
@@ -15,8 +15,12 @@ export class CommissionService {
     private customerService: CustomerService,
   ) {}
 
-  async getListCommission(): Promise<any> {
-    const data = await this.commissionModel.find({});
+  async getListCommission(pagination: pagination): Promise<any> {
+    const skip = pagination.limit * (pagination.page - 1);
+    const data = await this.commissionModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
     if (!data) {
       return {
         status: 0,

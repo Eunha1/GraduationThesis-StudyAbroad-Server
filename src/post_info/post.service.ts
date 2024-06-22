@@ -9,7 +9,7 @@ import {
   Post_infoDocument,
 } from './post.schema';
 import { Model } from 'mongoose';
-import { newMenu, newPost } from './post.dto';
+import { newMenu, newPost, pagination } from './post.dto';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -57,8 +57,12 @@ export class PostService {
     };
   }
 
-  async getListPost(): Promise<any> {
-    const data = await this.postModel.find({});
+  async getListPost(pagination: pagination): Promise<any> {
+    const skip = pagination.limit * (pagination.page - 1);
+    const data = await this.postModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
     const listPost = [];
     let count = 1;
     const web_url = this.config.get('WEB_URL');
@@ -127,11 +131,11 @@ export class PostService {
     };
   }
 
-  async findPostByID(_id: string):Promise<any>{
+  async findPostByID(_id: string): Promise<any> {
     const data = await this.postModel.findById(_id);
     const web_url = this.config.get('WEB_URL');
     if (!data) {
-      return null
+      return null;
     }
     let listCategory = [];
     for (const category of data.category) {
@@ -149,7 +153,7 @@ export class PostService {
       updated_at: data.updated_at,
       created_at: data.created_at,
     };
-    return postInfo
+    return postInfo;
   }
   async updatePost(
     _id: string,
@@ -236,8 +240,12 @@ export class PostService {
     };
   }
 
-  async getListCategory(): Promise<any> {
-    const data = await this.categoryModel.find({});
+  async getListCategory(pagination: pagination): Promise<any> {
+    const skip = pagination.limit * (pagination.page - 1);
+    const data = await this.categoryModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
     const listCategory = [];
     let count = 1;
     for (let item of data) {
@@ -271,32 +279,32 @@ export class PostService {
   }
 
   async getListPostMenuByID(_id: string): Promise<any> {
-    const menuInfo = await this.menuManagerModel.findById(_id)
+    const menuInfo = await this.menuManagerModel.findById(_id);
     if (!menuInfo) {
       return {
         status: 0,
         message: 'Không tồn tại slug',
       };
     }
-    const categoryInfo = await this.categoryModel.findById(menuInfo.category)
+    const categoryInfo = await this.categoryModel.findById(menuInfo.category);
     const web_url = this.config.get('WEB_URL');
     let listPostMenu = [];
-    for(let item of menuInfo.post){
-      const postInfo = await this.postModel.findById(item)
+    for (let item of menuInfo.post) {
+      const postInfo = await this.postModel.findById(item);
       const obj = {
         _id: postInfo._id,
-          title: postInfo.title,
-          description: postInfo.description,
-          image: web_url + '/' + postInfo.image,
-          author: postInfo.author,
-          category: categoryInfo.category,
-          slug: categoryInfo.slug,
-          updated_at: postInfo.updated_at,
-          created_at: postInfo.created_at,
-      }
-      listPostMenu.push(obj)
+        title: postInfo.title,
+        description: postInfo.description,
+        image: web_url + '/' + postInfo.image,
+        author: postInfo.author,
+        category: categoryInfo.category,
+        slug: categoryInfo.slug,
+        updated_at: postInfo.updated_at,
+        created_at: postInfo.created_at,
+      };
+      listPostMenu.push(obj);
     }
-    
+
     if (listPostMenu.length === 0) {
       return {
         status: 0,
@@ -352,14 +360,15 @@ export class PostService {
     };
   }
 
-
   async createNewMenu(newMenu: newMenu): Promise<any> {
-    const categoryInfo = await this.menuManagerModel.findOne({category: newMenu.category})
-    if(categoryInfo){
+    const categoryInfo = await this.menuManagerModel.findOne({
+      category: newMenu.category,
+    });
+    if (categoryInfo) {
       return {
-        status : 0, 
-        message: 'Category này đã tồn tại ở menu khác'
-      }
+        status: 0,
+        message: 'Category này đã tồn tại ở menu khác',
+      };
     }
     const data = {
       ...newMenu,
@@ -392,82 +401,88 @@ export class PostService {
     };
   }
 
-  async deleteMenu(_id: string): Promise<any>{
-    const data = await this.menuManagerModel.findByIdAndDelete(_id)
-    if(data){
+  async deleteMenu(_id: string): Promise<any> {
+    const data = await this.menuManagerModel.findByIdAndDelete(_id);
+    if (data) {
       return {
         status: 1,
-        message: 'Xóa menu thành công'
-      }
+        message: 'Xóa menu thành công',
+      };
     }
     return {
       status: 0,
-      message: 'Xóa menu không thành công'
-    }
+      message: 'Xóa menu không thành công',
+    };
   }
 
-  async getMenuTree(): Promise<any>{
-    const tree = await this.buildTree(null,[])
+  async getMenuTree(): Promise<any> {
+    const tree = await this.buildTree(null, []);
     return {
       status: 1,
-      message :'Lấy danh sách thành công',
-      data: tree
-    }
+      message: 'Lấy danh sách thành công',
+      data: tree,
+    };
   }
 
-  async getMenuById(_id: string):Promise<any>{
-    const info = await this.menuManagerModel.findById(_id)
-    if(!info){
+  async getMenuById(_id: string): Promise<any> {
+    const info = await this.menuManagerModel.findById(_id);
+    if (!info) {
       return {
         status: 0,
-        message : 'Lấy thông tin thất bại'
-      }
+        message: 'Lấy thông tin thất bại',
+      };
     }
     const data = {
       _id: info._id,
       name: info.name,
       menu_parent: await this.menuManagerModel.findById(info.menu_parent),
-      category: await this.categoryModel.findById(info.category)
-    }
+      category: await this.categoryModel.findById(info.category),
+    };
     return {
       status: 1,
       message: 'Lấy thông tin thành công',
-      data: data
-    }
+      data: data,
+    };
   }
 
-  async getListMenu():Promise<any>{
-    const listMenu = await this.menuManagerModel.find({})
-    let data = []
-    let count = 1
-    for(let item of listMenu){
+  async getListMenu(pagination: pagination): Promise<any> {
+    const skip = pagination.limit * (pagination.page - 1);
+    const listMenu = await this.menuManagerModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
+    let data = [];
+    let count = 1;
+    for (let item of listMenu) {
       const obj = {
         _id: item._id,
-        stt : count++,
-        name:  item.name,
+        stt: count++,
+        name: item.name,
         category: (await this.categoryModel.findById(item.category)).category,
-        slug : (await this.categoryModel.findById(item.category)).slug,
-        parent: item.menu_parent ? (await this.menuManagerModel.findById(item.menu_parent)).name : 'null'
-      }
-      data.push(obj)
+        slug: (await this.categoryModel.findById(item.category)).slug,
+        parent: item.menu_parent
+          ? (await this.menuManagerModel.findById(item.menu_parent)).name
+          : 'null',
+      };
+      data.push(obj);
     }
     return {
       status: 1,
       message: 'Lấy danh sách thành công',
-      data: data
-    }
+      data: data,
+    };
   }
 
-  async addPost(_id: string, listPost: any):Promise<any>{
+  async addPost(_id: string, listPost: any): Promise<any> {
     const data = {
-      post: listPost.map((item : any)=>item)
-    }
-    const menuInfo = await this.menuManagerModel.findByIdAndUpdate(_id, data)
-    if(!menuInfo){
+      post: listPost.map((item: any) => item),
+    };
+    const menuInfo = await this.menuManagerModel.findByIdAndUpdate(_id, data);
+    if (!menuInfo) {
       return {
         status: 0,
-        message: 'Cập nhật thất bại'
-      }
+        message: 'Cập nhật thất bại',
+      };
     }
     return {
       status: 1,
@@ -476,19 +491,21 @@ export class PostService {
     };
   }
 
-  async buildTree (menu_parent: any = null, data : any = []):Promise<any>{
-      const nodes = await this.menuManagerModel.find({menu_parent: menu_parent})
-      for(let node of nodes){
-        const obj = {
-          _id: node._id,
-          name: node.name,
-          category : (await this.categoryModel.findById(node.category)).category,
-          slug: (await this.categoryModel.findById(node.category)).slug,
-          parent_id : node.menu_parent
-        }
-        obj['children'] = await this.buildTree(node._id,[])
-        data.push(obj)
-      }
-      return data
+  async buildTree(menu_parent: any = null, data: any = []): Promise<any> {
+    const nodes = await this.menuManagerModel.find({
+      menu_parent: menu_parent,
+    });
+    for (let node of nodes) {
+      const obj = {
+        _id: node._id,
+        name: node.name,
+        category: (await this.categoryModel.findById(node.category)).category,
+        slug: (await this.categoryModel.findById(node.category)).slug,
+        parent_id: node.menu_parent,
+      };
+      obj['children'] = await this.buildTree(node._id, []);
+      data.push(obj);
+    }
+    return data;
   }
 }

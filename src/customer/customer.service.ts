@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Customer, CustomerDocument } from './customer.schema';
 import { Model } from 'mongoose';
-import { createAdviseInfo } from './customer.dto';
+import { createAdviseInfo, pagination } from './customer.dto';
 
 @Injectable()
 export class CustomerService {
@@ -45,8 +45,18 @@ export class CustomerService {
     };
   }
 
-  async getListAdviseInfo(): Promise<any> {
-    const info = await this.customerModel.find({});
+  async getListAdviseInfo(pagination: pagination): Promise<any> {
+    const countDocument = await this.customerModel
+      .find({ $and: [{ status: { $ne: 1 } }] })
+      .countDocuments();
+    const page = pagination.page ?? 1;
+    const limit = pagination.limit ?? countDocument;
+    const skip = limit * (page - 1);
+    const info = await this.customerModel
+      .find({ $and: [{ status: { $ne: 1 } }] })
+      .limit(limit)
+      .skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     if (!info) {
       return {
         status: 0,
@@ -73,7 +83,15 @@ export class CustomerService {
     return {
       status: 1,
       message: 'Lấy danh sách thành công',
-      data: data,
+      data: {
+        data: data,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
 
@@ -93,11 +111,84 @@ export class CustomerService {
     };
   }
 
+  async getAdviseInfoByStatus(
+    status: number,
+    pagination: pagination,
+  ): Promise<any> {
+    const countDocument = await this.customerModel
+      .find({ status: status })
+      .countDocuments();
+    const page = pagination.page ?? 1;
+    const limit = pagination.limit ?? countDocument;
+    const totalPage = Math.ceil(countDocument / limit);
+    const skip = limit * (page - 1);
+    const listAdvise = await this.customerModel
+      .find({ status: status })
+      .limit(limit)
+      .skip(skip);
+    if (!listAdvise) {
+      return {
+        status: 0,
+        message: 'Lấy danh sách thất bại',
+      };
+    }
+    let data = [];
+    listAdvise.map((item, index) => {
+      const obj = {
+        stt: index,
+        _id: item._id,
+        phone: item.phone,
+        name: item.name,
+        address: item.address,
+        email: item.email,
+        status: item.status,
+        level: item.level,
+        destination: item.destination,
+        question: item.question,
+        created_at: item.created_at,
+      };
+      data.push(obj);
+    });
+    return {
+      status: 1,
+      message: 'Lấy danh sách thành công',
+      data: {
+        data: data,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
+    };
+  }
+
+  async changeStatus(_id: string, status: number): Promise<any> {
+    const adviseInfo = await this.customerModel.findByIdAndUpdate(_id, {
+      status: status,
+    });
+  }
   async findCustomerByPhone(phone: string): Promise<CustomerDocument> {
     return await this.customerModel.findOne({ phone: phone });
   }
 
   async findCustomerById(_id: string): Promise<CustomerDocument> {
     return await this.customerModel.findById(_id);
+  }
+
+  async getAdviseInfo(_id: string): Promise<any> {
+    const info = await this.customerModel.findById(_id);
+    const data = {
+      phone: info.phone,
+      name: info.name,
+      address: info.address,
+      email: info.email,
+      status: info.status,
+      level: info.level,
+      destination: info.destination,
+      question: info.question,
+    };
+    return data;
   }
 }

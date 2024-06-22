@@ -36,3 +36,8 @@ export class visaRecord {
   customer_phone: string;
   country: string;
 }
+
+export class pagination {
+  page: number;
+  limit: number;
+}

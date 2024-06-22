@@ -16,7 +16,7 @@ import { Roles } from '../role/role.decorator';
 import { Role } from '../enum/roles.enum';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RoleGuard } from '../role/role.guard';
-import { newMenu, newPost } from './post.dto';
+import { newMenu, newPost, pagination } from './post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'src/helpers/config';
 import { extname } from 'path';
@@ -67,8 +67,8 @@ export class PostController {
   @Get('/post/list-post')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListPost() {
-    return await this.service.getListPost();
+  async getListPost(@Body() pagination: pagination) {
+    return await this.service.getListPost(pagination);
   }
 
   @Get('/get-post/:post_id')
@@ -116,8 +116,8 @@ export class PostController {
   @Get('/list-category')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListCategory() {
-    return await this.service.getListCategory();
+  async getListCategory(@Body() pagination: pagination) {
+    return await this.service.getListCategory(pagination);
   }
 
   @Post('/category/create')
@@ -152,75 +152,85 @@ export class PostController {
   }
 
   @Get('/list-post/menu/:id')
-  async getListPostMenuByID(@Param('id') id : string) {
+  async getListPostMenuByID(@Param('id') id: string) {
     return await this.service.getListPostMenuByID(id);
   }
 
   @Get('/list-post/slug')
-  async getListPostBySlug(@Query('slug') slug: string){
-    return await this.service.getListPostMenuBySlug(slug)
+  async getListPostBySlug(@Query('slug') slug: string) {
+    return await this.service.getListPostMenuBySlug(slug);
   }
 
   @Post('/menu/create-menu')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async createNewCategory(@Body() newMenu: newMenu){
-    if(!newMenu.name || newMenu.name === '' || !newMenu.category || newMenu.category === ''){
+  async createNewCategory(@Body() newMenu: newMenu) {
+    if (
+      !newMenu.name ||
+      newMenu.name === '' ||
+      !newMenu.category ||
+      newMenu.category === ''
+    ) {
       return {
         status: 0,
-        message : "Vui lòng thêm name và category"
-      }
+        message: 'Vui lòng thêm name và category',
+      };
     }
-    return await this.service.createNewMenu(newMenu)
+    return await this.service.createNewMenu(newMenu);
   }
 
   @Get('/menu/get-menu')
-  async getMenuTree(){
-    return await this.service.getMenuTree()
+  async getMenuTree() {
+    return await this.service.getMenuTree();
   }
 
   @Post('/menu/update-menu/:id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async updateMenu (@Body() body: any, @Param('id') id: string){
-    if(!body.name || body.name === '' || !body.category || body.category === ''){
+  async updateMenu(@Body() body: any, @Param('id') id: string) {
+    if (
+      !body.name ||
+      body.name === '' ||
+      !body.category ||
+      body.category === ''
+    ) {
       return {
         status: 0,
-        message : "Vui lòng thêm name và category"
-      }
+        message: 'Vui lòng thêm name và category',
+      };
     }
-    return await this.service.updateMenu(id,body)
+    return await this.service.updateMenu(id, body);
   }
 
   @Get('/menu/list-menu')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListMenu(){
-    return await this.service.getListMenu()
+  async getListMenu(@Body() pagination: pagination) {
+    return await this.service.getListMenu(pagination);
   }
 
   @Post('/menu/delete-menu/:id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async deleteMenu(@Param('id') id: string){
-    return await this.service.deleteMenu(id)
+  async deleteMenu(@Param('id') id: string) {
+    return await this.service.deleteMenu(id);
   }
 
   @Get('/menu/get-menu/:id')
-  async getMenuById(@Param('id') id: string){
-    return await this.service.getMenuById(id)
+  async getMenuById(@Param('id') id: string) {
+    return await this.service.getMenuById(id);
   }
 
   @Post('/menu/add-post/:id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async addPostToMenu(@Param('id') id: string, @Body() listPost : any ){
-    if(listPost.length === 0){
+  async addPostToMenu(@Param('id') id: string, @Body() listPost: any) {
+    if (listPost.length === 0) {
       return {
-        status : 0,
-        message: 'Vui lòng thêm ít nhất phải thêm một bài viết'
-      }
+        status: 0,
+        message: 'Vui lòng thêm ít nhất phải thêm một bài viết',
+      };
     }
-    return await this.service.addPost(id, listPost)
+    return await this.service.addPost(id, listPost);
   }
 }

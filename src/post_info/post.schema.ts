@@ -64,7 +64,7 @@ export class MenuManager {
 
   @Prop({ type: [{ type: String, ref: 'Post_info' }] })
   post: string[];
-  
+
   @Prop({ type: Date })
   created_at: Date;
 

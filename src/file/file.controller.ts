@@ -21,6 +21,7 @@ import {
   visaFile,
   offerLetterRecord,
   visaRecord,
+  pagination,
 } from './file.dto';
 import {
   FileFieldsInterceptor,
@@ -168,33 +169,33 @@ export class FileController {
 
   @Get('offer-letter-file')
   @UseGuards(AuthGuard)
-  async getListOfferLetter() {
-    return await this.service.getListOfferLetter();
+  async getListOfferLetter(@Body() pagination: pagination) {
+    return await this.service.getListOfferLetter(pagination);
   }
 
   @Get('visa-file')
   @UseGuards(AuthGuard)
-  async getListVisaFile() {
-    return await this.service.getListVisaFile();
+  async getListVisaFile(@Body() pagination: pagination) {
+    return await this.service.getListVisaFile(pagination);
   }
 
-  @Get('offer-letter/:offerLetter_id')
+  @Get('offer-letter/:id')
   @UseGuards(AuthGuard)
-  async getOfferLetterById(@Param('offerLetter_id') offerLetter_id: string) {
+  async getOfferLetterById(@Param('id') offerLetter_id: string) {
     return await this.service.getOfferLetterFileById(offerLetter_id);
   }
 
-  @Get('visa-file/:visa_id')
+  @Get('visa-file/:id')
   @UseGuards(AuthGuard)
-  async getVisaFileById(@Param('visa_id') visaFile_id: string) {
+  async getVisaFileById(@Param('id') visaFile_id: string) {
     return await this.service.getVisaFileById(visaFile_id);
   }
 
-  @Post('offer-letter/update-status/:offerLetter_id')
+  @Post('offer-letter/update-status/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
   async updateStatusOfferLetterFile(
-    @Param('offerLetter_id') offerLetterId: string,
+    @Param('id') offerLetterId: string,
     @Body() data: any,
   ) {
     if (!data.newStatus || data.newStatus === '') {
@@ -209,13 +210,10 @@ export class FileController {
     );
   }
 
-  @Post('visa-file/update-status/:visa_id')
+  @Post('visa-file/update-status/:id')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async updateStatusVisaFile(
-    @Param('visa_id') visaId: string,
-    @Body() data: any,
-  ) {
+  async updateStatusVisaFile(@Param('id') visaId: string, @Body() data: any) {
     if (!data.newStatus || data.newStatus === '') {
       return {
         status: 0,
@@ -382,15 +380,15 @@ export class FileController {
   @Get('/record/offer-letter')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async getRecordOfferLetter() {
-    return await this.service.getRecordOfferLetter();
+  async getRecordOfferLetter(@Body() pagination: pagination) {
+    return await this.service.getRecordOfferLetter(pagination);
   }
 
   @Get('/record/visa')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async getRecordVisa() {
-    return await this.service.getRecordVisa();
+  async getRecordVisa(@Body() pagination: pagination) {
+    return await this.service.getRecordVisa(pagination);
   }
 
   @Get('/record/offer-letter/:id')

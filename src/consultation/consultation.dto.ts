@@ -10,3 +10,8 @@ export class newConsultation {
   status: string;
   note: string;
 }
+
+export class pagination {
+  page: number;
+  limit: number;
+}

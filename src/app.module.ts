@@ -12,6 +12,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 import { HomeManagerModule } from './home_manager/home.module';
+import { TaskModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { HomeManagerModule } from './home_manager/home.module';
     StaffModule,
     AuthModule,
     HomeManagerModule,
+    TaskModule,
     MongooseModule.forRoot(process.env.DB),
   ],
   controllers: [],

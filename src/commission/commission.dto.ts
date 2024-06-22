@@ -7,3 +7,8 @@ export class newCommission {
   time_of_receipt: Date;
   amount: string;
 }
+
+export class pagination {
+  page: number;
+  limit: number;
+}

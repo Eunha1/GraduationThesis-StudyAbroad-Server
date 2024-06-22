@@ -11,3 +11,8 @@ export class newMenu {
   menu_parent: string;
   category: string;
 }
+
+export class pagination {
+  page: number;
+  limit: number;
+}

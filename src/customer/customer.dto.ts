@@ -7,3 +7,8 @@ export class createAdviseInfo {
   destination: string;
   question: string;
 }
+
+export class pagination {
+  page: number;
+  limit: number;
+}

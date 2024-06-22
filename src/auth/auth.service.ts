@@ -27,7 +27,7 @@ export class AuthService {
       };
     }
 
-    const token = await this.getToken(email, password, staff.role);
+    const token = await this.getToken(email, staff._id.toString(), staff.role);
     return {
       status: 1,
       message: 'Login success',
@@ -35,9 +35,9 @@ export class AuthService {
     };
   }
 
-  async getToken(email: string, password: string, role: Role[]): Promise<any> {
+  async getToken(email: string, _id: string, role: Role): Promise<any> {
     const payload = {
-      sub: password,
+      sub: _id,
       email,
       role,
     };

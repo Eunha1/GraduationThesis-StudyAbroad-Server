@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { createStaffDto, updateStaffInfo } from './staff.dto';
 import { hash } from 'bcrypt';
+import { Role } from 'src/enum/roles.enum';
 
 @Injectable()
 export class StaffService {
@@ -83,5 +84,47 @@ export class StaffService {
       status: 1,
       message: ' Cập nhật thành công',
     };
+  }
+
+  async getStaffByRole(role: Role): Promise<any> {
+    const listStaff = await this.staffModel.find({ role: role });
+    if (!listStaff) {
+      return {
+        status: 0,
+        message: 'Lấy thông tin thất bại',
+      };
+    }
+    const data = [];
+    listStaff.map((item, index) => {
+      const obj = {
+        _id: item._id,
+        email: item.email,
+        name: item.name,
+        phone: item.phone,
+      };
+      data.push(obj);
+    });
+    return {
+      status: 1,
+      message: 'Lấy thông tin thành công',
+      data: data,
+    };
+  }
+
+  async getRole(_id: any): Promise<any> {
+    const staff_info = await this.staffModel.findById(_id);
+    if (
+      !staff_info ||
+      ![Role.ADMIN, Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER].includes(
+        staff_info.role,
+      )
+    )
+      return null;
+    return staff_info.role;
+  }
+
+  async findStaffbyId(_id: string): Promise<any> {
+    const staff_info = await this.staffModel.findById(_id);
+    return staff_info;
   }
 }

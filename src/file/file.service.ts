@@ -19,6 +19,7 @@ import {
   visaFile,
   offerLetterRecord,
   visaRecord,
+  pagination,
 } from './file.dto';
 import { CustomerService } from '../customer/customer.service';
 import { ConfigService } from '@nestjs/config';
@@ -173,8 +174,12 @@ export class FileService {
     };
   }
 
-  async getListOfferLetter(): Promise<any> {
-    const offerLetterInfo = await this.offerLetterModel.find({});
+  async getListOfferLetter(pagination: pagination): Promise<any> {
+    const skip = pagination.limit * (pagination.page - 1);
+    const offerLetterInfo = await this.offerLetterModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
     let data: Array<any> = [];
     let count = 1;
     for (let item of offerLetterInfo) {
@@ -207,8 +212,12 @@ export class FileService {
     };
   }
 
-  async getListVisaFile(): Promise<any> {
-    const offerLetterInfo = await this.visaFileModel.find({});
+  async getListVisaFile(pagination: pagination): Promise<any> {
+    const skip = pagination.limit * (pagination.page - 1);
+    const offerLetterInfo = await this.visaFileModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
     let data: Array<any> = [];
     let count = 1;
     for (let item of offerLetterInfo) {
@@ -544,8 +553,12 @@ export class FileService {
     };
   }
 
-  async getRecordOfferLetter(): Promise<any> {
-    const info = await this.offerLetterRecordModel.find({});
+  async getRecordOfferLetter(pagination: pagination): Promise<any> {
+    const skip = pagination.limit * (pagination.page - 1);
+    const info = await this.offerLetterRecordModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
     let data = [];
     let count = 1;
     for (let item of info) {
@@ -579,8 +592,12 @@ export class FileService {
       data: data,
     };
   }
-  async getRecordVisa(): Promise<any> {
-    const info = await this.visaRecordsModel.find({});
+  async getRecordVisa(pagination: pagination): Promise<any> {
+    const skip = pagination.limit * (pagination.page - 1);
+    const info = await this.visaRecordsModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
     let data = [];
     let count = 1;
     for (let item of info) {

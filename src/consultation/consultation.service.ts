@@ -5,7 +5,7 @@ import {
   After_consultationDocument,
 } from './consultation.schema';
 import { Model } from 'mongoose';
-import { newConsultation } from './consultation.dto';
+import { newConsultation, pagination } from './consultation.dto';
 import { CustomerService } from 'src/customer/customer.service';
 
 @Injectable()
@@ -57,8 +57,16 @@ export class ConsultationService {
     };
   }
 
-  async getListConsultation(): Promise<any> {
-    const listConsultation = await this.consultaionModel.find({});
+  async getListConsultation(pagination: pagination): Promise<any> {
+    const countDocument = await this.consultaionModel.find({}).countDocuments();
+    const page = pagination.page ?? 1;
+    const limit = pagination.limit ?? countDocument;
+    const skip = limit * (page - 1);
+    const listConsultation = await this.consultaionModel
+      .find({})
+      .limit(pagination.limit)
+      .skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     if (!listConsultation) {
       return {
         status: 0,
@@ -78,6 +86,7 @@ export class ConsultationService {
         customer_phone: customer_info.phone,
         customer_address: customer_info.address,
         customer_email: customer_info.email,
+        status: item.status,
         level: item.level,
         school: item.school,
         majors: item.majors,
@@ -93,7 +102,15 @@ export class ConsultationService {
     return {
       status: 0,
       message: 'Lấy danh sách thành công',
-      data: data,
+      data: {
+        data: data,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
 
@@ -109,7 +126,7 @@ export class ConsultationService {
       consultationInfo.customer_id,
     );
     const data = {
-      consultation_id: _id,
+      _id: _id,
       customer_name: customer_info.name,
       customer_phone: customer_info.phone,
       customer_address: customer_info.address,
@@ -165,5 +182,33 @@ export class ConsultationService {
       status: 0,
       message: 'Xóa thông tin tư vấn thất bại',
     };
+  }
+
+  async checkConsultation(_id: string): Promise<any> {
+    const info = await this.consultaionModel.findById(_id);
+    if (!info) return false;
+    return true;
+  }
+
+  async getConsultation(_id: string): Promise<any> {
+    const info = await this.consultaionModel.findById(_id);
+    const customer_info = await this.customerService.findCustomerById(
+      info.customer_id,
+    );
+    const data = {
+      name: customer_info.name,
+      phone: customer_info.phone,
+      email: customer_info.email,
+      school_year: info.school_year,
+      school_name: info.school,
+      level: info.level,
+      country: info.country,
+      majors: info.majors,
+      note: info.note,
+      finance: info.finance,
+      schoolarship: info.schoolarship,
+      status: info.status,
+    };
+    return data;
   }
 }

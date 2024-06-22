@@ -28,7 +28,7 @@ export class Staff_Info {
   area_list: string[];
 
   @Prop({ type: String, enum: Role })
-  role: Role[];
+  role: Role;
 
   @Prop({ type: Date })
   created_at: Date;

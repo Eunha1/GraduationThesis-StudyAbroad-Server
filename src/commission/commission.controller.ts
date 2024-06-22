@@ -4,7 +4,7 @@ import { Roles } from '../role/role.decorator';
 import { Role } from '../enum/roles.enum';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RoleGuard } from '../role/role.guard';
-import { newCommission } from './commission.dto';
+import { newCommission, pagination } from './commission.dto';
 
 @Controller('api/commission')
 export class CommissionController {
@@ -13,8 +13,8 @@ export class CommissionController {
   @Get('list-commission')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListCommission() {
-    return await this.service.getListCommission();
+  async getListCommission(@Body() pagination: pagination) {
+    return await this.service.getListCommission(pagination);
   }
 
   @Post('create-commission')
