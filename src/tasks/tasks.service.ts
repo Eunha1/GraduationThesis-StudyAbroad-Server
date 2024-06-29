@@ -328,4 +328,14 @@ export class TaskService {
     }
     return true;
   }
+
+  async checkTaskById(_id : string, receiver: string): Promise<any>{
+    const info = await this.taskModel.find({
+      receiver: receiver,
+      task: _id,
+      status: 2
+    })
+    if(!info) return false
+    return true
+  }
 }

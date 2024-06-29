@@ -98,7 +98,7 @@ export class FileController {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.uploadOfferLetterFile(files, offerLetterInfo);
+    return await this.service.uploadOfferLetterFile(files, offerLetterInfo, req.user.sub);
   }
 
   @Post('upload/visa-file')
@@ -164,13 +164,13 @@ export class FileController {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.uploadVisaFile(files, visaInfo);
+    return await this.service.uploadVisaFile(files, visaInfo, req.user.sub);
   }
 
   @Get('offer-letter-file')
   @UseGuards(AuthGuard)
-  async getListOfferLetter(@Body() pagination: pagination) {
-    return await this.service.getListOfferLetter(pagination);
+  async getListOfferLetter(@Body() pagination: pagination,@Req() req: any) {
+    return await this.service.getListOfferLetter(pagination, req.user.sub);
   }
 
   @Get('visa-file')
@@ -259,7 +259,7 @@ export class FileController {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.updateOfferLetterFile(id, files, body);
+    return await this.service.updateOfferLetterFile(id, files, body,req.user.sub);
   }
 
   @Post('/update/visa-file/:id')

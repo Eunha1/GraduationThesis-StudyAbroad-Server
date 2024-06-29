@@ -8,6 +8,7 @@ import { ConsultationController } from './consultation.controller';
 import { ConsultationService } from './consultation.service';
 import { JwtService } from '@nestjs/jwt';
 import { CustomerModule } from 'src/customer/customer.module';
+import { TaskModule } from 'src/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CustomerModule } from 'src/customer/customer.module';
       { name: After_consultation.name, schema: After_consultationSchema },
     ]),
     forwardRef(() => CustomerModule),
+    forwardRef(()=> TaskModule)
   ],
   providers: [ConsultationService, JwtService],
   controllers: [ConsultationController],

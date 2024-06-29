@@ -15,10 +15,14 @@ import { FileService } from './file.service';
 import { JwtService } from '@nestjs/jwt';
 import { CustomerModule } from '../customer/customer.module';
 import { ConfigModule } from '@nestjs/config';
+import { TaskModule } from 'src/tasks/tasks.module';
+import { StaffModule } from 'src/staff/staff.module';
 
 @Module({
   imports: [
     forwardRef(() => CustomerModule),
+    forwardRef(()=> TaskModule),
+    forwardRef(()=>StaffModule),
     ConfigModule,
     MongooseModule.forFeature([
       { name: Offer_letterFile.name, schema: Offer_letterFile_Schema },

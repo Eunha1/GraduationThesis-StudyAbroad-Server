@@ -7,6 +7,7 @@ import {
 import { Model } from 'mongoose';
 import { newConsultation, pagination } from './consultation.dto';
 import { CustomerService } from 'src/customer/customer.service';
+import { TaskService } from 'src/tasks/tasks.service';
 
 @Injectable()
 export class ConsultationService {
@@ -16,12 +17,22 @@ export class ConsultationService {
 
     @Inject(forwardRef(() => CustomerService))
     private customerService: CustomerService,
+
+    @Inject(forwardRef(()=>TaskService))
+    private taskService: TaskService
   ) {}
 
-  async createNewConsultation(newConsultation: newConsultation): Promise<any> {
+  async createNewConsultation(newConsultation: newConsultation, staff :string): Promise<any> {
     const customer = await this.customerService.findCustomerByPhone(
       newConsultation.customer_phone,
     );
+    const checkTask = await this.taskService.checkTaskById(customer._id.toString(), staff)
+    if(!checkTask){
+      return {
+        status: 0,
+        message: 'Bạn không có nhiệm vụ hoặc chưa đồng ý nhận cho khách hàng này'
+      }
+    }
     if (!customer) {
       return {
         status: 0,
@@ -38,6 +49,7 @@ export class ConsultationService {
       finance: newConsultation.finance,
       schoolarship: newConsultation.schoolarship,
       status: newConsultation.status,
+      staff_id: staff,
       note: newConsultation.note,
       created_at: new Date(),
       updated_at: new Date(),
@@ -57,13 +69,13 @@ export class ConsultationService {
     };
   }
 
-  async getListConsultation(pagination: pagination): Promise<any> {
-    const countDocument = await this.consultaionModel.find({}).countDocuments();
+  async getListConsultation(pagination: pagination, staff: string): Promise<any> {
+    const countDocument = await this.consultaionModel.find({staff_id: staff}).countDocuments();
     const page = pagination.page ?? 1;
     const limit = pagination.limit ?? countDocument;
     const skip = limit * (page - 1);
     const listConsultation = await this.consultaionModel
-      .find({})
+      .find({staff_id: staff})
       .limit(pagination.limit)
       .skip(skip);
     const totalPage = Math.ceil(countDocument / limit);
@@ -86,10 +98,16 @@ export class ConsultationService {
         customer_phone: customer_info.phone,
         customer_address: customer_info.address,
         customer_email: customer_info.email,
-        status: item.status,
+        school_year: item.school_year,
+        school_name: item.school,
         level: item.level,
-        school: item.school,
+        country: item.country,
         majors: item.majors,
+        note: item.note,
+        finance: item.finance,
+        schoolarship: item.schoolarship,
+        status: item.status,
+        school: item.school,
       };
       data.push(obj);
     }

@@ -115,6 +115,9 @@ export class Offer_letter {
   @Prop({ trim: true })
   school: string;
 
+  @Prop({ type: [{ type: String, ref: 'Staff_Info' }] })
+  staff_list: string[];
+
   @Prop({ trim: true })
   country: string;
 
@@ -141,6 +144,9 @@ export class Visa {
   @Prop({ trim: true })
   country: string;
 
+  @Prop({ type: [{ type: String, ref: 'Staff_Info' }] })
+  staff_list: string[];
+  
   @Prop({ type: Date })
   created_at: Date;
 

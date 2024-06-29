@@ -24,6 +24,8 @@ import {
 import { CustomerService } from '../customer/customer.service';
 import { ConfigService } from '@nestjs/config';
 import { mergeObject } from 'src/utils/mergeObject';
+import { TaskService } from 'src/tasks/tasks.service';
+import { StaffService } from 'src/staff/staff.service';
 @Injectable()
 export class FileService {
   constructor(
@@ -42,12 +44,19 @@ export class FileService {
     @Inject(forwardRef(() => CustomerService))
     private customerService: CustomerService,
 
+    @Inject(forwardRef(()=> TaskService))
+    private taskService: TaskService,
+
+    @Inject(forwardRef(()=> StaffService))
+    private staffService: StaffService,
+
     private config: ConfigService,
   ) {}
 
   async uploadOfferLetterFile(
     files: offerLetterFile,
     offerLetterInfo: offerLetterInfo,
+    staff_id: string
   ): Promise<any> {
     const customer = await this.customerService.findCustomerByPhone(
       offerLetterInfo.customer_phone,
@@ -57,6 +66,13 @@ export class FileService {
         status: 0,
         message: 'Không tồn tại số điện thoại này',
       };
+    }
+    const checkTask = await this.taskService.checkTaskById(customer._id.toString(), staff_id)
+    if(!checkTask){
+      return {
+        status: 0,
+        message: 'Nhiệm vụ này không phải của bạn'
+      }
     }
     const data = {
       customer_id: customer._id,
@@ -86,6 +102,7 @@ export class FileService {
           )
         : files.motivation_letter,
       status: offerLetterInfo.status,
+      staff: staff_id,
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -103,7 +120,7 @@ export class FileService {
     };
   }
 
-  async uploadVisaFile(files: visaFile, visaInfo: visaInfo): Promise<any> {
+  async uploadVisaFile(files: visaFile, visaInfo: visaInfo, staff_id: string): Promise<any> {
     const customer = await this.customerService.findCustomerByPhone(
       visaInfo.customer_phone,
     );
@@ -113,7 +130,13 @@ export class FileService {
         message: 'Không tồn tại số điện thoại này',
       };
     }
-
+    const checkTask = await this.taskService.checkTaskById(customer._id.toString(), staff_id)
+    if(!checkTask){
+      return {
+        status: 0,
+        message: 'Nhiệm vụ này không phải của bạn'
+      }
+    }
     const data = {
       customer_id: customer._id,
       country: visaInfo.country,
@@ -156,6 +179,7 @@ export class FileService {
             (item) => item.destination + '/' + item.filename,
           )
         : [],
+      staff: staff_id,
       status: visaInfo.status,
       created_at: new Date(),
       updated_at: new Date(),
@@ -174,12 +198,22 @@ export class FileService {
     };
   }
 
-  async getListOfferLetter(pagination: pagination): Promise<any> {
-    const skip = pagination.limit * (pagination.page - 1);
+  async getListOfferLetter(pagination: pagination, staff_id: string): Promise<any> {
+    const countDocument = await this.offerLetterModel.find({
+      $and : [
+        { staff_list: staff_id}
+      ]
+    }).countDocuments()
+    const page = pagination.page ?? 1
+    const limit = pagination.limit ?? countDocument
+    const skip = limit * (page - 1);
     const offerLetterInfo = await this.offerLetterModel
-      .find({})
-      .limit(pagination.limit)
+      .find({$and : [
+        { staff_list: staff_id}
+      ]})
+      .limit(limit)
       .skip(skip);
+    const totalPage = Math.ceil(countDocument / limit)
     let data: Array<any> = [];
     let count = 1;
     for (let item of offerLetterInfo) {
@@ -208,7 +242,15 @@ export class FileService {
     return {
       status: 1,
       message: 'Lấy danh sách thành công',
-      data: data,
+      data: {
+        data: data,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        }
+      },
     };
   }
 
@@ -260,6 +302,14 @@ export class FileService {
     const customer_info = await this.customerService.findCustomerById(
       offerLetter_info.customer_id,
     );
+    const staff_list = []
+    for(let item of offerLetter_info.staff_list){
+      const staff_info = await this.staffService.findStaffbyId(item)
+      staff_list.push({
+        email: staff_info.email,
+        phonel: staff_info.phone
+      })
+    }
     const web_url = this.config.get('WEB_URL');
     const data = {
       customer_name: customer_info.name,
@@ -267,6 +317,7 @@ export class FileService {
       customer_email: customer_info.email,
       customer_address: customer_info.address,
       customer_level: customer_info.level,
+      staff: staff_list,
       school_name: offerLetter_info.school,
       country: offerLetter_info.country,
       imagesList: [
@@ -760,7 +811,7 @@ export class FileService {
     };
   }
 
-  async updateOfferLetterFile(_id: string, files: any, body: any) {
+  async updateOfferLetterFile(_id: string, files: any, body: any, staff: string) {
     const dataBody = {
       ...body,
     };
@@ -790,6 +841,7 @@ export class FileService {
             (item: any) => item.destination + '/' + item.filename,
           )
         : files.motivation_letter,
+      staff_list: staff,
       updated_at: new Date(),
     };
     const data = mergeObject(dataBody, dataFiles);
