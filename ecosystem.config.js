@@ -6,7 +6,7 @@ module.exports = {
             instances: 'max',
             exec_mode: 'cluster',
             env: {
-              PORT: 9999,
+              PORT: 3001,
             }, 
         }
     ]
