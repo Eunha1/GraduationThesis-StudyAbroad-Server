@@ -58,4 +58,12 @@ export class AuthController {
       message: 'test success',
     };
   }
+
+  @Get('/test')
+  async test(){
+    return {
+      status : 1,
+      message: 'test success'
+    }
+  }
 }
