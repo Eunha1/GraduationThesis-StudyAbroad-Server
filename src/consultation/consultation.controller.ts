@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ConsultationService } from './consultation.service';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { newConsultation, pagination } from './consultation.dto';
@@ -13,7 +22,10 @@ export class ConsultationController {
   @Post('create')
   @Roles(Role.EDU_COUNSELLOR)
   @UseGuards(AuthGuard, RoleGuard)
-  async createNewConsultation(@Body() newConsultation: newConsultation, @Req() req:any) {
+  async createNewConsultation(
+    @Body() newConsultation: newConsultation,
+    @Req() req: any,
+  ) {
     if (
       !newConsultation.customer_phone ||
       newConsultation.customer_phone === ''
@@ -23,13 +35,16 @@ export class ConsultationController {
         message: 'Vui lòng điển thông tin số điện thoại khách hàng',
       };
     }
-    return await this.service.createNewConsultation(newConsultation, req.user.sub);
+    return await this.service.createNewConsultation(
+      newConsultation,
+      req.user.sub,
+    );
   }
 
   @Get('list')
   @Roles(Role.EDU_COUNSELLOR)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListConsultation(@Body() pagination: pagination, @Req() req: any) {
+  async getListConsultation(@Query() pagination: pagination, @Req() req: any) {
     return await this.service.getListConsultation(pagination, req.user.sub);
   }
 

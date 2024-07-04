@@ -98,7 +98,11 @@ export class FileController {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.uploadOfferLetterFile(files, offerLetterInfo, req.user.sub);
+    return await this.service.uploadOfferLetterFile(
+      files,
+      offerLetterInfo,
+      req.user.sub,
+    );
   }
 
   @Post('upload/visa-file')
@@ -169,13 +173,13 @@ export class FileController {
 
   @Get('offer-letter-file')
   @UseGuards(AuthGuard)
-  async getListOfferLetter(@Body() pagination: pagination,@Req() req: any) {
+  async getListOfferLetter(@Query() pagination: pagination, @Req() req: any) {
     return await this.service.getListOfferLetter(pagination, req.user.sub);
   }
 
   @Get('visa-file')
   @UseGuards(AuthGuard)
-  async getListVisaFile(@Body() pagination: pagination) {
+  async getListVisaFile(@Query() pagination: pagination) {
     return await this.service.getListVisaFile(pagination);
   }
 
@@ -259,7 +263,12 @@ export class FileController {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.updateOfferLetterFile(id, files, body,req.user.sub);
+    return await this.service.updateOfferLetterFile(
+      id,
+      files,
+      body,
+      req.user.sub,
+    );
   }
 
   @Post('/update/visa-file/:id')
@@ -380,14 +389,14 @@ export class FileController {
   @Get('/record/offer-letter')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async getRecordOfferLetter(@Body() pagination: pagination) {
+  async getRecordOfferLetter(@Query() pagination: pagination) {
     return await this.service.getRecordOfferLetter(pagination);
   }
 
   @Get('/record/visa')
   @Roles(Role.EDU_COUNSELLOR, Role.ADMISSION_OFFICER)
   @UseGuards(AuthGuard, RoleGuard)
-  async getRecordVisa(@Body() pagination: pagination) {
+  async getRecordVisa(@Query() pagination: pagination) {
     return await this.service.getRecordVisa(pagination);
   }
 

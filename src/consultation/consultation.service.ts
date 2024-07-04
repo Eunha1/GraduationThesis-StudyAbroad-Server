@@ -18,20 +18,27 @@ export class ConsultationService {
     @Inject(forwardRef(() => CustomerService))
     private customerService: CustomerService,
 
-    @Inject(forwardRef(()=>TaskService))
-    private taskService: TaskService
+    @Inject(forwardRef(() => TaskService))
+    private taskService: TaskService,
   ) {}
 
-  async createNewConsultation(newConsultation: newConsultation, staff :string): Promise<any> {
+  async createNewConsultation(
+    newConsultation: newConsultation,
+    staff: string,
+  ): Promise<any> {
     const customer = await this.customerService.findCustomerByPhone(
       newConsultation.customer_phone,
     );
-    const checkTask = await this.taskService.checkTaskById(customer._id.toString(), staff)
-    if(!checkTask){
+    const checkTask = await this.taskService.checkTaskById(
+      customer._id.toString(),
+      staff,
+    );
+    if (!checkTask) {
       return {
         status: 0,
-        message: 'Bạn không có nhiệm vụ hoặc chưa đồng ý nhận cho khách hàng này'
-      }
+        message:
+          'Bạn không có nhiệm vụ hoặc chưa đồng ý nhận cho khách hàng này',
+      };
     }
     if (!customer) {
       return {
@@ -69,13 +76,15 @@ export class ConsultationService {
     };
   }
 
-  async getListConsultation(pagination: pagination, staff: string): Promise<any> {
-    const countDocument = await this.consultaionModel.find({staff_id: staff}).countDocuments();
-    const page = pagination.page ?? 1;
-    const limit = pagination.limit ?? countDocument;
+  async getListConsultation(pagination: any, staff: string): Promise<any> {
+    const countDocument = await this.consultaionModel
+      .find({ staff_id: staff })
+      .countDocuments();
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
     const listConsultation = await this.consultaionModel
-      .find({staff_id: staff})
+      .find({ staff_id: staff })
       .limit(pagination.limit)
       .skip(skip);
     const totalPage = Math.ceil(countDocument / limit);

@@ -67,7 +67,7 @@ export class PostController {
   @Get('/post/list-post')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListPost(@Body() pagination: pagination) {
+  async getListPost(@Query() pagination: pagination) {
     return await this.service.getListPost(pagination);
   }
 
@@ -116,7 +116,7 @@ export class PostController {
   @Get('/list-category')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListCategory(@Body() pagination: pagination) {
+  async getListCategory(@Query() pagination: pagination) {
     return await this.service.getListCategory(pagination);
   }
 
@@ -205,7 +205,7 @@ export class PostController {
   @Get('/menu/list-menu')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListMenu(@Body() pagination: pagination) {
+  async getListMenu(@Query() pagination: pagination) {
     return await this.service.getListMenu(pagination);
   }
 

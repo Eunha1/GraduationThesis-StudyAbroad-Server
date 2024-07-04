@@ -63,19 +63,19 @@ export class TaskController {
   }
   @Get('/get-task')
   @UseGuards(AuthGuard)
-  async getReceiverTask(@Req() req: any, @Body() pagination: pagination) {
+  async getReceiverTask(@Req() req: any, @Query() pagination: pagination) {
     return await this.service.getReceivertTask(req.user.sub, pagination);
   }
   @Get('/owner-task')
   @UseGuards(AuthGuard)
-  async getOwnerTask(@Req() req: any, @Body() pagination: pagination) {
+  async getOwnerTask(@Req() req: any, @Query() pagination: pagination) {
     return await this.service.getOwnerTask(req.user.sub, pagination);
   }
   @Get('/owner-task-consultation')
   @UseGuards(AuthGuard)
   async getOwnerTaskConsultation(
     @Req() req: any,
-    @Body() pagination: pagination,
+    @Query() pagination: pagination,
   ) {
     return await this.service.getOwnerTaskForConsultation(
       req.user.sub,
@@ -86,7 +86,7 @@ export class TaskController {
   @UseGuards(AuthGuard)
   async getReceiverTaskForConsultation(
     @Req() req: any,
-    @Body() pagination: pagination,
+    @Query() pagination: pagination,
   ) {
     return await this.service.getReceiverTaskForConsultation(
       req.user.sub,

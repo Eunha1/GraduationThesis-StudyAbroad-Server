@@ -26,7 +26,7 @@ export class CustomerController {
   @Get('advise-info')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListAdviseInfo(@Body() pagination: pagination) {
+  async getListAdviseInfo(@Query() pagination: pagination) {
     return await this.service.getListAdviseInfo(pagination);
   }
 
@@ -41,7 +41,7 @@ export class CustomerController {
   @UseGuards(AuthGuard, RoleGuard)
   async getAdviseInfoByStatus(
     @Query('status') status: number,
-    @Body() pagination: pagination,
+    @Query() pagination: pagination,
   ) {
     return await this.service.getAdviseInfoByStatus(status, pagination);
   }

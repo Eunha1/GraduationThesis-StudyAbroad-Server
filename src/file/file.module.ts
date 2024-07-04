@@ -21,8 +21,8 @@ import { StaffModule } from 'src/staff/staff.module';
 @Module({
   imports: [
     forwardRef(() => CustomerModule),
-    forwardRef(()=> TaskModule),
-    forwardRef(()=>StaffModule),
+    forwardRef(() => TaskModule),
+    forwardRef(() => StaffModule),
     ConfigModule,
     MongooseModule.forFeature([
       { name: Offer_letterFile.name, schema: Offer_letterFile_Schema },

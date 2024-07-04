@@ -57,12 +57,13 @@ export class PostService {
     };
   }
 
-  async getListPost(pagination: pagination): Promise<any> {
-    const skip = pagination.limit * (pagination.page - 1);
-    const data = await this.postModel
-      .find({})
-      .limit(pagination.limit)
-      .skip(skip);
+  async getListPost(pagination: any): Promise<any> {
+    const countDocument = await this.postModel.find({}).countDocuments();
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
+    const skip = limit * (page - 1);
+    const data = await this.postModel.find({}).limit(limit).skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     const listPost = [];
     let count = 1;
     const web_url = this.config.get('WEB_URL');
@@ -94,7 +95,15 @@ export class PostService {
     return {
       status: 1,
       message: 'lấy danh sách thành công',
-      data: listPost,
+      data: {
+        data: listPost,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
 
@@ -240,12 +249,13 @@ export class PostService {
     };
   }
 
-  async getListCategory(pagination: pagination): Promise<any> {
-    const skip = pagination.limit * (pagination.page - 1);
-    const data = await this.categoryModel
-      .find({})
-      .limit(pagination.limit)
-      .skip(skip);
+  async getListCategory(pagination: any): Promise<any> {
+    const countDocument = await this.categoryModel.find({}).countDocuments();
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
+    const skip = limit * (page - 1);
+    const data = await this.categoryModel.find({}).limit(limit).skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     const listCategory = [];
     let count = 1;
     for (let item of data) {
@@ -260,7 +270,15 @@ export class PostService {
     return {
       status: 1,
       message: 'Lấy danh sách thành công',
-      data: listCategory,
+      data: {
+        data: listCategory,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
 
@@ -445,12 +463,16 @@ export class PostService {
     };
   }
 
-  async getListMenu(pagination: pagination): Promise<any> {
-    const skip = pagination.limit * (pagination.page - 1);
+  async getListMenu(pagination: any): Promise<any> {
+    const countDocument = await this.menuManagerModel.find({}).countDocuments();
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
+    const skip = limit * (page - 1);
     const listMenu = await this.menuManagerModel
       .find({})
-      .limit(pagination.limit)
+      .limit(limit)
       .skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     let data = [];
     let count = 1;
     for (let item of listMenu) {
@@ -469,7 +491,15 @@ export class PostService {
     return {
       status: 1,
       message: 'Lấy danh sách thành công',
-      data: data,
+      data: {
+        data: data,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
 

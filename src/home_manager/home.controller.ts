@@ -28,7 +28,7 @@ export class HomeManagerController {
   @Get('/list-banner')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async getListBanner(@Body() pagination: pagination) {
+  async getListBanner(@Query() pagination: pagination) {
     return await this.service.getListBanner(pagination);
   }
 
@@ -99,14 +99,14 @@ export class HomeManagerController {
   }
 
   @Get('/news-and-event/list')
-  async getListNewsAndEvent(@Body() pagination: pagination) {
+  async getListNewsAndEvent(@Query() pagination: pagination) {
     return await this.service.getListNewAndEvent(pagination);
   }
 
   @Get('/news-and-event/type')
   async getListNewsAndEventByType(
     @Query('type') type: number,
-    @Body() pagination: pagination,
+    @Query() pagination: pagination,
   ) {
     return await this.service.getNewsAndEventByType(type, pagination);
   }
@@ -212,7 +212,7 @@ export class HomeManagerController {
   }
 
   @Get('/list-testimonial')
-  async getListTestimonial(@Body() pagination: pagination) {
+  async getListTestimonial(@Query() pagination: pagination) {
     return await this.service.getListTestimonial(pagination);
   }
 

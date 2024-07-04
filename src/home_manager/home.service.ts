@@ -31,12 +31,17 @@ export class HomeManagerService {
     private config: ConfigService,
   ) {}
 
-  async getListBanner(pagination: pagination): Promise<any> {
-    const skip = pagination.limit * (pagination.page - 1);
+  async getListBanner(pagination: any): Promise<any> {
+    const countDocument = await this.bannerModel
+    .find({}).countDocuments()
+    const page = pagination.page ?? 1
+    const limit = pagination.limit ?? countDocument
+    const skip = limit * (page - 1);
     const listBanner = await this.bannerModel
       .find({})
-      .limit(pagination.limit)
+      .limit(limit)
       .skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     if (!listBanner) {
       return {
         status: 0,
@@ -59,7 +64,15 @@ export class HomeManagerService {
     return {
       status: 1,
       message: 'Get list success',
-      data: data,
+      data: {
+        data:data,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
 
@@ -143,13 +156,15 @@ export class HomeManagerService {
       message: 'Create success',
     };
   }
-  async getListNewAndEvent(pagination: pagination): Promise<any> {
-    const skip = pagination.limit * (pagination.page - 1);
-    const list = await this.newsAndEventModel
+  async getListNewAndEvent(pagination: any): Promise<any> {
+    const countDocument = await this.newsAndEventModel
       .find({})
-      .limit(pagination.limit)
-      .skip(skip);
-
+      .countDocuments();
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
+    const skip = limit * (page - 1);
+    const list = await this.newsAndEventModel.find({}).limit(limit).skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     const info = [];
     let count = 1;
     for (let item of list) {
@@ -165,7 +180,15 @@ export class HomeManagerService {
     return {
       status: 0,
       message: 'Get list success',
-      data: info,
+      data: {
+        data: info,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
 
@@ -187,15 +210,18 @@ export class HomeManagerService {
       data: info,
     };
   }
-  async getNewsAndEventByType(
-    type: number,
-    pagination: pagination,
-  ): Promise<any> {
-    const skip = pagination.limit * (pagination.page - 1);
+  async getNewsAndEventByType(type: number, pagination: any): Promise<any> {
+    const countDocument = await this.newsAndEventModel
+      .find({ type: type })
+      .countDocuments();
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
+    const skip = limit * (page - 1);
     const list = await this.newsAndEventModel
       .find({ type: type })
       .limit(pagination.limit)
       .skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     const info = [];
     let count = 1;
     for (let item of list) {
@@ -210,7 +236,15 @@ export class HomeManagerService {
     return {
       status: 0,
       message: 'Get list success',
-      data: info,
+      data: {
+        data: info,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
   async deleteNewsAndEvent(_id: string): Promise<any> {
@@ -292,12 +326,16 @@ export class HomeManagerService {
       message: 'Cập nhật thành công',
     };
   }
-  async getListTestimonial(pagination: pagination): Promise<any> {
-    const skip = pagination.limit * (pagination.page - 1);
+  async getListTestimonial(pagination: any): Promise<any> {
+    const countDocument = await this.testimonialModel.find({}).countDocuments();
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
+    const skip = limit * (page - 1);
     const listInfo = await this.testimonialModel
       .find({})
       .limit(pagination.limit)
       .skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
     const web_url = this.config.get('WEB_URL');
     let count = 1;
     const data = [];
@@ -315,7 +353,15 @@ export class HomeManagerService {
     return {
       status: 1,
       message: 'Get list success',
-      data: data,
+      data: {
+        data: data,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
     };
   }
 

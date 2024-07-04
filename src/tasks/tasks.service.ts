@@ -98,12 +98,12 @@ export class TaskService {
       message: 'Giao nhiệm vụ thành công',
     };
   }
-  async getReceivertTask(_id: string, pagination: pagination): Promise<any> {
+  async getReceivertTask(_id: string, pagination: any): Promise<any> {
     const countDocument = await this.taskModel
       .find({ receiver: _id })
       .countDocuments();
-    const page = pagination.page ?? 1;
-    const limit = pagination.limit ?? countDocument;
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
     const taskInfo = await this.taskModel
       .find({ receiver: _id })
@@ -143,12 +143,12 @@ export class TaskService {
       },
     };
   }
-  async getOwnerTask(_id: string, pagination: pagination): Promise<any> {
+  async getOwnerTask(_id: string, pagination: any): Promise<any> {
     const countDocument = await this.taskModel
       .find({ owner: _id })
       .countDocuments();
-    const page = pagination.page ?? 1;
-    const limit = pagination.limit ?? countDocument;
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
     const taskInfo = await this.taskModel
       .find({ owner: _id })
@@ -190,13 +190,13 @@ export class TaskService {
   }
   async getReceiverTaskForConsultation(
     _id: string,
-    pagination: pagination,
+    pagination: any,
   ): Promise<any> {
     const countDocument = await this.taskModel
       .find({ receiver: _id })
       .countDocuments();
-    const page = pagination.page ?? 1;
-    const limit = pagination.limit ?? countDocument;
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
     const taskInfo = await this.taskModel
       .find({ receiver: _id })
@@ -238,13 +238,13 @@ export class TaskService {
   }
   async getOwnerTaskForConsultation(
     _id: string,
-    pagination: pagination,
+    pagination: any,
   ): Promise<any> {
     const countDocument = await this.taskModel
       .find({ owner: _id })
       .countDocuments();
-    const page = pagination.page ?? 1;
-    const limit = pagination.limit ?? countDocument;
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
     const taskInfo = await this.taskModel
       .find({ owner: _id })
@@ -329,13 +329,13 @@ export class TaskService {
     return true;
   }
 
-  async checkTaskById(_id : string, receiver: string): Promise<any>{
+  async checkTaskById(_id: string, receiver: string): Promise<any> {
     const info = await this.taskModel.find({
       receiver: receiver,
       task: _id,
-      status: 2
-    })
-    if(!info) return false
-    return true
+      status: 2,
+    });
+    if (!info) return false;
+    return true;
   }
 }

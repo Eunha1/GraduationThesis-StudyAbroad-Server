@@ -45,12 +45,12 @@ export class CustomerService {
     };
   }
 
-  async getListAdviseInfo(pagination: pagination): Promise<any> {
+  async getListAdviseInfo(pagination: any): Promise<any> {
     const countDocument = await this.customerModel
       .find({ $and: [{ status: { $ne: 1 } }] })
       .countDocuments();
-    const page = pagination.page ?? 1;
-    const limit = pagination.limit ?? countDocument;
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
     const info = await this.customerModel
       .find({ $and: [{ status: { $ne: 1 } }] })
@@ -111,15 +111,12 @@ export class CustomerService {
     };
   }
 
-  async getAdviseInfoByStatus(
-    status: number,
-    pagination: pagination,
-  ): Promise<any> {
+  async getAdviseInfoByStatus(status: number, pagination: any): Promise<any> {
     const countDocument = await this.customerModel
       .find({ status: status })
       .countDocuments();
-    const page = pagination.page ?? 1;
-    const limit = pagination.limit ?? countDocument;
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
     const totalPage = Math.ceil(countDocument / limit);
     const skip = limit * (page - 1);
     const listAdvise = await this.customerModel

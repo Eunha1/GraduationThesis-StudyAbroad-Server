@@ -60,10 +60,10 @@ export class AuthController {
   }
 
   @Get('/test')
-  async test(){
+  async test() {
     return {
-      status : 1,
-      message: 'test success'
-    }
+      status: 1,
+      message: 'test success',
+    };
   }
 }

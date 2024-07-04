@@ -16,7 +16,7 @@ import { TaskModule } from 'src/tasks/tasks.module';
       { name: After_consultation.name, schema: After_consultationSchema },
     ]),
     forwardRef(() => CustomerModule),
-    forwardRef(()=> TaskModule)
+    forwardRef(() => TaskModule),
   ],
   providers: [ConsultationService, JwtService],
   controllers: [ConsultationController],

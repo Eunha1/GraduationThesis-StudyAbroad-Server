@@ -146,7 +146,7 @@ export class Visa {
 
   @Prop({ type: [{ type: String, ref: 'Staff_Info' }] })
   staff_list: string[];
-  
+
   @Prop({ type: Date })
   created_at: Date;
 
