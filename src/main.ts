@@ -5,13 +5,15 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.enableCors({
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type,Authorization',
-    credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  });
+  // app.enableCors({
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   allowedHeaders: 'Content-Type,Authorization',
+  //   credentials: true,
+  //   preflightContinue: false,
+  //   optionsSuccessStatus: 204,
+  // });
+  //const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.useStaticAssets(path.join(process.cwd(), ''));
   const port = process.env.PORT;
   app.use(morgan('common'));
