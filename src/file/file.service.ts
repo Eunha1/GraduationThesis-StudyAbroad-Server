@@ -26,6 +26,7 @@ import { ConfigService } from '@nestjs/config';
 import { mergeObject } from 'src/utils/mergeObject';
 import { TaskService } from 'src/tasks/tasks.service';
 import { StaffService } from 'src/staff/staff.service';
+import { Role } from 'src/enum/roles.enum';
 @Injectable()
 export class FileService {
   constructor(
@@ -213,18 +214,32 @@ export class FileService {
   }
 
   async getListOfferLetter(pagination: any, staff_id: string): Promise<any> {
-    const countDocument = await this.offerLetterModel
-      .find({
-        $and: [{ staff_list: staff_id }],
-      })
-      .countDocuments();
+    let countDocument : any
+    const staff_role = await this.staffService.getRole(staff_id)
+    if(staff_role == Role.ADMIN){
+      countDocument = await this.offerLetterModel.find({}).countDocuments()
+    }else{
+      countDocument = await this.offerLetterModel
+        .find({
+          $and: [{ staff_list: staff_id }],
+        })
+        .countDocuments();
+    }
     const page = parseInt(pagination.page) ?? 1;
     const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
-    const offerLetterInfo = await this.offerLetterModel
-      .find({ $and: [{ staff_list: staff_id }] })
+    let offerLetterInfo : any
+    if(staff_role == Role.ADMIN){
+      offerLetterInfo = await this.offerLetterModel
+      .find({})
       .limit(limit)
-      .skip(skip);
+      .skip(skip); 
+    }else {
+      offerLetterInfo = await this.offerLetterModel
+        .find({ $and: [{ staff_list: staff_id }] })
+        .limit(limit)
+        .skip(skip);
+    }
     const totalPage = Math.ceil(countDocument / limit);
     let data: Array<any> = [];
     let count = 1;
@@ -267,24 +282,40 @@ export class FileService {
   }
 
   async getListVisaFile(pagination: any, staff_id: string): Promise<any> {
-    const countDocument = await this.visaFileModel
-      .find({
-        $and: [{ staff_list: staff_id }],
-      })
+    let countDocument : any
+    const staff_role = await this.staffService.getRole(staff_id)
+    if(staff_role == Role.ADMIN){
+      countDocument = await this.visaFileModel
+      .find({})
       .countDocuments();
+    }else {
+      countDocument = await this.visaFileModel
+       .find({
+         $and: [{ staff_list: staff_id }],
+       })
+       .countDocuments();
+    }
     const page = parseInt(pagination.page) ?? 1;
     const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
-    const offerLetterInfo = await this.visaFileModel
-      .find({
-        $and: [{ staff_list: staff_id }],
-      })
+    let visaInfo : any
+    if(staff_role == Role.ADMIN){
+      visaInfo = await this.visaFileModel
+      .find({})
       .limit(limit)
       .skip(skip);
+    }else{
+      visaInfo = await this.visaFileModel
+        .find({
+          $and: [{ staff_list: staff_id }],
+        })
+        .limit(limit)
+        .skip(skip);
+    }
     const totalPage = Math.ceil(countDocument / limit);
     let data: Array<any> = [];
     let count = 1;
-    for (let item of offerLetterInfo) {
+    for (let item of visaInfo) {
       const customer_info = await this.customerService.findCustomerById(
         item.customer_id,
       );
