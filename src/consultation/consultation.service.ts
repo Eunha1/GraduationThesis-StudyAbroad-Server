@@ -56,7 +56,7 @@ export class ConsultationService {
       finance: newConsultation.finance,
       schoolarship: newConsultation.schoolarship,
       evaluate: newConsultation.evaluate,
-      status: newConsultation.status,
+      status: 0,
       staff_id: staff,
       note: newConsultation.note,
       created_at: new Date(),
