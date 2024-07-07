@@ -80,6 +80,7 @@ export class TaskService {
       task: task,
       status: 1,
     }).save();
+    await this.consultationService.changeStatus(task, 2)
     if (!newTask) {
       return {
         status: 0,
@@ -304,6 +305,32 @@ export class TaskService {
     };
   }
 
+  async confirmTaskConsultation(
+    status: number,
+    _id: string,
+    receiver: string,
+    consultaionStatus: number,
+  ): Promise<any> {
+    const task = await this.taskModel.findById(_id);
+    if (!task) {
+      return {
+        status: 0,
+        message: 'Không tồn tại nhiệm vụ này',
+      };
+    }
+    if (!(task.receiver == receiver)) {
+      return {
+        status: 0,
+        message: 'Bạn không có nhiệm vụ này',
+      };
+    }
+    await this.taskModel.findByIdAndUpdate(_id, { status: status });
+    await this.consultationService.changeStatus(task.task,consultaionStatus)
+    return {
+      status: 1,
+      message: 'Cập nhật thành công',
+    };
+  }
   async checkRolePermission(owner: string, receiver: string): Promise<any> {
     const ownerRole = await this.staffService.getRole(owner);
     const receiverRole = await this.staffService.getRole(receiver);

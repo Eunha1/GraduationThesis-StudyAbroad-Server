@@ -56,7 +56,7 @@ export class ConsultationService {
       finance: newConsultation.finance,
       schoolarship: newConsultation.schoolarship,
       evaluate: newConsultation.evaluate,
-      status: 0,
+      status: 1,
       staff_id: staff,
       note: newConsultation.note,
       created_at: new Date(),
@@ -243,5 +243,9 @@ export class ConsultationService {
       status: info.status,
     };
     return data;
+  }
+  
+  async changeStatus (_id: string, status : number):Promise<any>{
+    await this.consultaionModel.findByIdAndUpdate(_id,{status: status})
   }
 }

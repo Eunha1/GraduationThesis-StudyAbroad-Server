@@ -108,4 +108,18 @@ export class TaskController {
       body.adviseStatus,
     );
   }
+
+  @Post('/confirm/consultation/:id')
+  @UseGuards(AuthGuard)
+  async confirmTaskConsultation(@Param('id') id: string,
+  @Query('status') status: number,
+  @Req() req: any,
+  @Body() body: any){
+    return await this.service.confirmTaskConsultation(
+      status,
+      id,
+      req.user.sub,
+      body.consultationStatus,
+    )
+  }
 }
