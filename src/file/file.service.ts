@@ -416,12 +416,21 @@ export class FileService {
     const customer_info = await this.customerService.findCustomerById(
       visaFile_info.customer_id,
     );
+    const staff_list = [];
+    for (let item of visaFile_info.staff_list) {
+      const staff_info = await this.staffService.findStaffbyId(item);
+      staff_list.push({
+        email: staff_info.email,
+        phonel: staff_info.phone,
+      });
+    }
     const web_url = this.config.get('WEB_URL');
     const data = {
       customer_name: customer_info.name,
       customer_phone: customer_info.phone,
       customer_email: customer_info.email,
       customer_address: customer_info.address,
+      staff: staff_list,
       country: visaFile_info.country,
       imagesList: [
         {
