@@ -7,6 +7,7 @@ export class newConsultation {
   majors: string;
   finance: string;
   schoolarship: string;
+  evaluate: string;
   status: string;
   note: string;
 }

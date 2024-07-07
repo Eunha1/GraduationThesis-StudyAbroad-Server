@@ -38,11 +38,18 @@ export class CustomerController {
   }
 
   @Get('list-advise')
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard)
   async getAdviseInfoByStatus(
     @Query('status') status: number,
     @Query() pagination: pagination,
   ) {
     return await this.service.getAdviseInfoByStatus(status, pagination);
+  }
+
+  @Post('change-status/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
+  async changeStatus(@Param('id') id: string, @Query('status') status: number){
+    return await this.service.changeStatusCustomer(id, status)
   }
 }

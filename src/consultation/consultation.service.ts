@@ -55,6 +55,7 @@ export class ConsultationService {
       majors: newConsultation.majors,
       finance: newConsultation.finance,
       schoolarship: newConsultation.schoolarship,
+      evaluate: newConsultation.evaluate,
       status: newConsultation.status,
       staff_id: staff,
       note: newConsultation.note,
@@ -115,6 +116,7 @@ export class ConsultationService {
         note: item.note,
         finance: item.finance,
         schoolarship: item.schoolarship,
+        evaluate: item.evaluate,
         status: item.status,
         school: item.school,
       };
@@ -166,6 +168,7 @@ export class ConsultationService {
       note: consultationInfo.note,
       finance: consultationInfo.finance,
       schoolarship: consultationInfo.schoolarship,
+      evaluate: consultationInfo.evaluate,
       status: consultationInfo.status,
       created_at: consultationInfo.created_at,
       updated_at: consultationInfo.updated_at,
@@ -199,6 +202,7 @@ export class ConsultationService {
 
   async deleteConsultation(_id: string): Promise<any> {
     const data = await this.consultaionModel.findByIdAndDelete(_id);
+    await this.taskService.deleteTask(_id)
     if (data) {
       return {
         status: 1,
@@ -223,6 +227,7 @@ export class ConsultationService {
       info.customer_id,
     );
     const data = {
+      customer_id: customer_info._id,
       name: customer_info.name,
       phone: customer_info.phone,
       email: customer_info.email,
@@ -234,6 +239,7 @@ export class ConsultationService {
       note: info.note,
       finance: info.finance,
       schoolarship: info.schoolarship,
+      evaluate: info.evaluate,
       status: info.status,
     };
     return data;

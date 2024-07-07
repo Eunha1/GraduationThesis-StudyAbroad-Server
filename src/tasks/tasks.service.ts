@@ -113,7 +113,7 @@ export class TaskService {
     let count = 0;
     for (let item of taskInfo) {
       const obj = {
-        _id: item._id,
+        task_id: item._id,
         stt: count++,
         owner: (await this.staffService.findStaffbyId(item.owner)).email,
         receiver: (await this.staffService.findStaffbyId(item.receiver)).email,
@@ -158,7 +158,7 @@ export class TaskService {
     let count = 0;
     for (let item of taskInfo) {
       const obj = {
-        _id: item._id,
+        task_id: item._id,
         stt: count++,
         owner: (await this.staffService.findStaffbyId(item.owner)).email,
         receiver: (await this.staffService.findStaffbyId(item.receiver)).email,
@@ -206,7 +206,7 @@ export class TaskService {
     let count = 0;
     for (let item of taskInfo) {
       const obj = {
-        _id: item._id,
+        task_id: item._id,
         stt: count++,
         owner: (await this.staffService.findStaffbyId(item.owner)).email,
         receiver: (await this.staffService.findStaffbyId(item.receiver)).email,
@@ -254,7 +254,7 @@ export class TaskService {
     let count = 0;
     for (let item of taskInfo) {
       const obj = {
-        _id: item._id,
+        task_id: item._id,
         stt: count++,
         owner: (await this.staffService.findStaffbyId(item.owner)).email,
         receiver: (await this.staffService.findStaffbyId(item.receiver)).email,
@@ -331,5 +331,12 @@ export class TaskService {
     console.log(info);
     if (!(info.length > 0)) return false;
     return true;
+  }
+
+  async deleteTask(task: string):Promise<any>{
+    const data = await this.taskModel.find({task: task})
+    for(let item of data){
+      await this.taskModel.findByIdAndDelete(item._id)
+    }
   }
 }

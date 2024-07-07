@@ -111,6 +111,7 @@ export class FileService {
       updated_at: new Date(),
     };
     const newInfo = await new this.offerLetterModel(data).save();
+    await this.customerService.changeStatus(customer._id.toString(), 4)
     if (!newInfo) {
       return {
         status: 0,
@@ -197,6 +198,7 @@ export class FileService {
       updated_at: new Date(),
     };
     const newInfo = await new this.visaFileModel(data).save();
+    await this.customerService.changeStatus(customer._id.toString(),4)
     if (!newInfo) {
       return {
         status: 0,
@@ -574,6 +576,7 @@ export class FileService {
       updated_at: new Date(),
     };
     const newInfo = await new this.offerLetterRecordModel(data).save();
+    await this.customerService.changeStatus(customer._id.toString(),5)
     if (!newInfo) {
       return {
         status: 0,
@@ -619,6 +622,7 @@ export class FileService {
       updated_at: new Date(),
     };
     const newInfo = await new this.visaRecordsModel(data).save();
+    await this.customerService.changeStatus(customer._id.toString(), 6)
     if (!newInfo) {
       return {
         status: 0,

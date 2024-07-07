@@ -32,6 +32,9 @@ export class After_consultation {
   schoolarship: string;
 
   @Prop()
+  evaluate: number;
+
+  @Prop()
   status: number;
 
   @Prop({ trim: true })

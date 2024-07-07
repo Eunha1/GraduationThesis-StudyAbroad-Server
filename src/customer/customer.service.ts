@@ -177,6 +177,7 @@ export class CustomerService {
   async getAdviseInfo(_id: string): Promise<any> {
     const info = await this.customerModel.findById(_id);
     const data = {
+      customer_id: info._id,
       phone: info.phone,
       name: info.name,
       address: info.address,
@@ -187,5 +188,21 @@ export class CustomerService {
       question: info.question,
     };
     return data;
+  }
+
+  async changeStatusCustomer(_id : string, status: number):Promise<any>{
+    const adviseInfo = await this.customerModel.findByIdAndUpdate(_id, {
+      status: status,
+    });
+    if(!adviseInfo){
+      return {
+        status: 0,
+        message: 'Cập nhật thất bại'
+      }
+    }
+    return {
+      status: 1,
+      message: 'Cập nhật thành công'
+    }
   }
 }
