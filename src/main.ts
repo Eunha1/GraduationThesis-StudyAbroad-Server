@@ -13,7 +13,7 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
   app.useStaticAssets(path.join(process.cwd(), ''));
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT;
   app.use(morgan('common'));
   await app.listen(port, () => {
     console.log(`App listen at port ${port}`);
