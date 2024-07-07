@@ -94,7 +94,6 @@ export class FileController {
         message: 'Vui lòng tải file ',
       };
     }
-    console.log(files);
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
@@ -179,8 +178,8 @@ export class FileController {
 
   @Get('visa-file')
   @UseGuards(AuthGuard)
-  async getListVisaFile(@Query() pagination: pagination) {
-    return await this.service.getListVisaFile(pagination);
+  async getListVisaFile(@Query() pagination: pagination, @Req() req: any) {
+    return await this.service.getListVisaFile(pagination, req.user.sub);
   }
 
   @Get('offer-letter/:id')

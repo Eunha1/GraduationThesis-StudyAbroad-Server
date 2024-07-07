@@ -420,17 +420,19 @@ export class PostService {
   }
 
   async deleteMenu(_id: string): Promise<any> {
-    const data = await this.menuManagerModel.findByIdAndDelete(_id);
-    if (data) {
-      return {
-        status: 1,
-        message: 'Xóa menu thành công',
-      };
-    }
+    await this.deleteMenuTree(_id);
     return {
-      status: 0,
-      message: 'Xóa menu không thành công',
+      status: 1,
+      message: 'Xóa menu thành công',
     };
+  }
+
+  async deleteMenuTree(_id: string): Promise<any> {
+    const listChild = await this.menuManagerModel.find({ menu_parent: _id });
+    for (let item of listChild) {
+      await this.deleteMenuTree(item._id.toString());
+    }
+    const data = await this.menuManagerModel.findByIdAndDelete(_id);
   }
 
   async getMenuTree(): Promise<any> {

@@ -38,6 +38,14 @@ export class StaffService {
         message: 'Email đã được sử dụng bởi tài khoản khác!',
       };
     }
+    if (
+      !['EDU_COUNSELLOR', 'ADMISSION_OFFICER'].includes(createStaffDto.role)
+    ) {
+      return {
+        status: 0,
+        message: 'Role chỉ có thể là EDU_COUNSELLOR hoặc ADMISSION_OFFICER',
+      };
+    }
     const key = this.makeKey(16);
     const newStaff = {
       email: createStaffDto.email,
@@ -121,6 +129,64 @@ export class StaffService {
     )
       return null;
     return staff_info.role;
+  }
+
+  async getAllStaff(pagination: any): Promise<any> {
+    const countDocument = await this.staffModel
+      .find({ $and: [{ role: { $ne: 'ADMIN' } }] })
+      .countDocuments();
+    const page = parseInt(pagination.page) ?? 1;
+    const limit = parseInt(pagination.limit) ?? countDocument;
+    const skip = limit * (page - 1);
+    const listStaff = await this.staffModel
+      .find({ $and: [{ role: { $ne: 'ADMIN' } }] })
+      .limit(limit)
+      .skip(skip);
+    const totalPage = Math.ceil(countDocument / limit);
+    const data = [];
+    let count = 1;
+    for (let item of listStaff) {
+      const obj = {
+        _id: item._id,
+        email: item.email,
+        role: item.role,
+        stt: count++,
+      };
+      data.push(obj);
+    }
+    if (!(data.length > 0)) {
+      return {
+        status: 0,
+        message: 'Lấy danh sách thất bại',
+      };
+    }
+    return {
+      status: 1,
+      message: 'Lấy danh sách thành công',
+      data: {
+        data: data,
+        paginate: {
+          page: page,
+          limit: limit,
+          total: countDocument,
+          total_page: totalPage,
+        },
+      },
+    };
+  }
+
+  async deleteAccount(_id: string): Promise<any> {
+    const data = await this.staffModel.findByIdAndDelete(_id);
+    if (!data) {
+      return {
+        status: 0,
+        message: 'Xóa tài khoản thất bại',
+      };
+    }
+    return {
+      status: 1,
+      message: 'Xóa tài khoản thành công',
+    };
   }
 
   async findStaffbyId(_id: string): Promise<any> {

@@ -32,15 +32,11 @@ export class HomeManagerService {
   ) {}
 
   async getListBanner(pagination: any): Promise<any> {
-    const countDocument = await this.bannerModel
-    .find({}).countDocuments()
-    const page = pagination.page ?? 1
-    const limit = pagination.limit ?? countDocument
+    const countDocument = await this.bannerModel.find({}).countDocuments();
+    const page = pagination.page ?? 1;
+    const limit = pagination.limit ?? countDocument;
     const skip = limit * (page - 1);
-    const listBanner = await this.bannerModel
-      .find({})
-      .limit(limit)
-      .skip(skip);
+    const listBanner = await this.bannerModel.find({}).limit(limit).skip(skip);
     const totalPage = Math.ceil(countDocument / limit);
     if (!listBanner) {
       return {
@@ -65,7 +61,7 @@ export class HomeManagerService {
       status: 1,
       message: 'Get list success',
       data: {
-        data:data,
+        data: data,
         paginate: {
           page: page,
           limit: limit,

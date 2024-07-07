@@ -36,13 +36,6 @@ export class TaskService {
         message: 'Bạn không có quyền giao nhiệm vụ này',
       };
     }
-    const taskInfo = await this.customerService.findCustomerById(task);
-    if (!taskInfo) {
-      return {
-        status: 0,
-        message: 'Không tồn tại thông tin về khách hàng này',
-      };
-    }
     const newTask = await new this.taskModel({
       owner: owner,
       receiver: receiver,
@@ -335,7 +328,8 @@ export class TaskService {
       task: _id,
       status: 2,
     });
-    if (!info) return false;
+    console.log(info);
+    if (!(info.length > 0)) return false;
     return true;
   }
 }

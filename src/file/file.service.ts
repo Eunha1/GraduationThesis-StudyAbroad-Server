@@ -74,7 +74,8 @@ export class FileService {
     if (!checkTask) {
       return {
         status: 0,
-        message: 'Nhiệm vụ này không phải của bạn',
+        message:
+          'Nhiệm vụ này không phải của bạn hoặc bạn chưa chấp nhận nhiệm vụ',
       };
     }
     const data = {
@@ -105,7 +106,7 @@ export class FileService {
           )
         : files.motivation_letter,
       status: offerLetterInfo.status,
-      staff: staff_id,
+      staff_list: staff_id,
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -144,7 +145,8 @@ export class FileService {
     if (!checkTask) {
       return {
         status: 0,
-        message: 'Nhiệm vụ này không phải của bạn',
+        message:
+          'Nhiệm vụ này không phải của bạn hoặc bạn chưa chấp nhận nhiệm vụ',
       };
     }
     const data = {
@@ -189,7 +191,7 @@ export class FileService {
             (item) => item.destination + '/' + item.filename,
           )
         : [],
-      staff: staff_id,
+      staff_list: staff_id,
       status: visaInfo.status,
       created_at: new Date(),
       updated_at: new Date(),
@@ -262,13 +264,19 @@ export class FileService {
     };
   }
 
-  async getListVisaFile(pagination: any): Promise<any> {
-    const countDocument = await this.visaFileModel.find({}).countDocuments();
+  async getListVisaFile(pagination: any, staff_id: string): Promise<any> {
+    const countDocument = await this.visaFileModel
+      .find({
+        $and: [{ staff_list: staff_id }],
+      })
+      .countDocuments();
     const page = parseInt(pagination.page) ?? 1;
     const limit = parseInt(pagination.limit) ?? countDocument;
     const skip = limit * (page - 1);
     const offerLetterInfo = await this.visaFileModel
-      .find({})
+      .find({
+        $and: [{ staff_list: staff_id }],
+      })
       .limit(limit)
       .skip(skip);
     const totalPage = Math.ceil(countDocument / limit);

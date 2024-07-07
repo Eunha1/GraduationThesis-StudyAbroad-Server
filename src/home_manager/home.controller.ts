@@ -103,7 +103,7 @@ export class HomeManagerController {
     return await this.service.getListNewAndEvent(pagination);
   }
 
-  @Get('/news-and-event/type')
+  @Get('/news-and-event')
   async getListNewsAndEventByType(
     @Query('type') type: number,
     @Query() pagination: pagination,

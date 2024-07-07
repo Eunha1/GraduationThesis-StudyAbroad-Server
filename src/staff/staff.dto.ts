@@ -10,3 +10,8 @@ export class updateStaffInfo {
   avatar: string;
   address: string;
 }
+
+export class pagination {
+  page: number;
+  limit: number;
+}
