@@ -368,7 +368,7 @@ export class FileService {
       const staff_info = await this.staffService.findStaffbyId(item);
       staff_list.push({
         email: staff_info.email,
-        phonel: staff_info.phone,
+        phone: staff_info.phone,
       });
     }
     const web_url = this.config.get('WEB_URL');
@@ -593,6 +593,7 @@ export class FileService {
   async uploadOfferLetter(
     files: { offer_letter?: Express.Multer.File[] },
     offerLetterRecord: offerLetterRecord,
+    staff_id: string
   ): Promise<any> {
     const customer = await this.customerService.findCustomerByPhone(
       offerLetterRecord.customer_phone,
@@ -612,6 +613,7 @@ export class FileService {
         : files.offer_letter,
       school: offerLetterRecord.school_name,
       country: offerLetterRecord.country,
+      staff_list: [staff_id],
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -633,6 +635,7 @@ export class FileService {
   async uploadVisa(
     files: { visa?: Express.Multer.File[] },
     visaRecord: visaRecord,
+    staff_id: string
   ) {
     const customer = await this.customerService.findCustomerByPhone(
       visaRecord.customer_phone,
@@ -658,6 +661,7 @@ export class FileService {
         ? files.visa.map((item) => item.destination + '/' + item.filename)
         : files.visa,
       country: visaRecord.country,
+      staff_list: [staff_id],
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -788,6 +792,14 @@ export class FileService {
     const customer_info = await this.customerService.findCustomerById(
       info.customer_id,
     );
+    const staff_list = []
+    for(let item of info.staff_list){
+      const staff_info = await this.staffService.findStaffbyId(item)
+      staff_list.push({
+        email: staff_info.email,
+        phone: staff_info.phone,
+      })
+    }
     const web_url = this.config.get('WEB_URL');
     const data = {
       customer_name: customer_info.name,
@@ -796,6 +808,7 @@ export class FileService {
       customer_address: customer_info.address,
       school: info.school,
       country: info.country,
+      staff: staff_list,
       imagesList: [
         {
           name: 'offer-letter',
@@ -826,6 +839,14 @@ export class FileService {
     const customer_info = await this.customerService.findCustomerById(
       info.customer_id,
     );
+    const staff_list = []
+    for(let item of info.staff_list){
+      const staff_info = await this.staffService.findStaffbyId(item)
+      staff_list.push({
+        email: staff_info.email,
+        phone: staff_info.phone,
+      });
+    } 
     const web_url = this.config.get('WEB_URL');
     const data = {
       customer_name: customer_info.name,
@@ -833,6 +854,7 @@ export class FileService {
       customer_email: customer_info.email,
       customer_address: customer_info.address,
       country: info.country,
+      staff: staff_list,
       imagesList: [
         {
           name: 'visa',

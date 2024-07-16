@@ -347,7 +347,7 @@ export class FileController {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.uploadOfferLetter(files, offerLetterRecord);
+    return await this.service.uploadOfferLetter(files, offerLetterRecord, req.user.sub);
   }
 
   @Post('/upload/visa')
@@ -382,7 +382,7 @@ export class FileController {
     if (req.fileValidatorError) {
       throw new BadRequestException(req.fileValidatorError);
     }
-    return await this.service.uploadVisa(files, visaRecord);
+    return await this.service.uploadVisa(files, visaRecord, req.user.sub);
   }
 
   @Get('/record/offer-letter')
